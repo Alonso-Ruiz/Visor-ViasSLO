@@ -1,0 +1,228 @@
+        var map = new ol.Map({
+            target: 'map',
+            renderer: ['webgl', 'canvas'],
+            layers: [googleSat, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerHighlight, layerLimite],
+            view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
+            controls: [new ol.control.ScaleLine()]
+        });
+
+        map.addControl(new ol.control.Zoom());
+
+        var northArrowEl = document.createElement('div');
+        northArrowEl.className = 'north-arrow-ctrl ol-unselectable ol-control';
+        northArrowEl.title = 'Orientar al Norte';
+        var compassIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        compassIcon.setAttribute('id', 'compass-icon');
+        compassIcon.setAttribute('viewBox', '0 0 24 24');
+        var compassPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        compassPath.setAttribute('d', 'M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z');
+        compassIcon.appendChild(compassPath);
+        northArrowEl.appendChild(compassIcon);
+        northArrowEl.onclick = function() {
+            map.getView().animate({ rotation: 0, duration: 350 });
+        };
+        map.addControl(new ol.control.Control({ element: northArrowEl }));
+
+        map.getView().on('change:rotation', function() {
+            var rotation = map.getView().getRotation();
+            document.getElementById('compass-icon').style.transform = 'rotate(' + rotation + 'rad)';
+        });
+
+
+
+        map.on('singleclick', function(evt) {
+            var feature = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
+                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones) ? f : null;
+            }, { hitTolerance: 10 }); 
+            
+            if (feature) { mostrarPopupFeature(feature, evt.coordinate); } 
+            else { overlay.setPosition(undefined); sourceHighlight.clear(); }
+        });
+
+
+        // =========================================================
+        // MEJORA UX: CAMBIO DE CURSOR AL PASAR SOBRE UNA VÍA (HOVER)
+        // =========================================================
+        map.on('pointermove', function(evt) {
+            if (evt.dragging) return;
+
+            var hit = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
+                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones) ? true : false;
+            }, { hitTolerance: 10 });
+
+            var viewport = map.getViewport();
+            if (hit) {
+                viewport.classList.add('is-hovering');
+            } else {
+                viewport.classList.remove('is-hovering');
+            }
+        });
+
+
+        // =========================================================
+        // INTERACCIONES AVANZADAS: ZOOM (SHIFT) Y SELECCIÓN (CLICK DERECHO)
+        // =========================================================
+        const esMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+        
+        if (!esMobile) {
+            var dragZoom = new ol.interaction.DragZoom({
+                condition: ol.events.condition.shiftKeyOnly
+            });
+            map.addInteraction(dragZoom);
+
+            var dragBox = new ol.interaction.DragBox({
+                condition: function(mapBrowserEvent) {
+                    return mapBrowserEvent.originalEvent.button === 2; 
+                }
+            });
+
+            map.addInteraction(dragBox);
+
+            dragBox.on('boxend', function() {
+                var extent = dragBox.getGeometry().getExtent();
+                var selectedFeatures = [];
+                var layersToSelect = [layerMetroArterial, layerMetroColectora, layerMetroExpresa, layerPref, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda];
+
+                layersToSelect.forEach(function(layer) {
+                    if(layer.getVisible()) {
+                        layer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+                            selectedFeatures.push(feature);
+                        });
+                    }
+                });
+
+                if (selectedFeatures.length > 0) {
+                    var boxCenter = ol.extent.getCenter(extent);
+                    mostrarPopupFeature(selectedFeatures[0], boxCenter, selectedFeatures); 
+                }
+            });
+
+            dragBox.on('boxstart', function() {
+                sourceHighlight.clear();
+                overlay.setPosition(undefined);
+            });
+        }
+
+        // =========================================================
+        // 5. CHECKBOXES, GRUPOS SINCRONIZADOS Y VISIBILIDAD POR ESCALA
+        // =========================================================
+        var chkMetroMaster = document.getElementById('chk-metro');
+        var subsMetro = ['chk-metro-art', 'chk-metro-col', 'chk-metro-exp'];
+
+        chkMetroMaster.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            subsMetro.forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.checked = isChecked;
+            });
+            actualizarVisibilidadCapas();
+        });
+
+        function updateMasterMetroState() {
+            var allChecked = subsMetro.every(id => document.getElementById(id).checked);
+            var anyChecked = subsMetro.some(id => document.getElementById(id).checked);
+            chkMetroMaster.checked = allChecked;
+            chkMetroMaster.indeterminate = !allChecked && anyChecked;
+        }
+
+        subsMetro.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                updateMasterMetroState();
+                actualizarVisibilidadCapas();
+            });
+        });
+
+        var chkSecMaster = document.getElementById('chk-sec');
+        var subsSec = ['chk-sec-veh', 'chk-sec-res', 'chk-sec-pas', 'chk-sec-ala'];
+
+        chkSecMaster.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            subsSec.forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.checked = isChecked;
+            });
+            actualizarVisibilidadCapas();
+        });
+
+        function updateMasterSecState() {
+            var allChecked = subsSec.every(id => document.getElementById(id).checked);
+            var anyChecked = subsSec.some(id => document.getElementById(id).checked);
+            chkSecMaster.checked = allChecked;
+            chkSecMaster.indeterminate = !allChecked && anyChecked; 
+        }
+
+        subsSec.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                updateMasterSecState();
+                actualizarVisibilidadCapas();
+            });
+        });
+
+        document.getElementById('chk-sec-res').addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            document.getElementById('chk-sec-pas').checked = isChecked;
+            document.getElementById('chk-sec-ala').checked = isChecked;
+            updateMasterSecState();
+            actualizarVisibilidadCapas();
+        });
+
+        function actualizarVisibilidadCapas() {
+            var z = map.getView().getZoom();
+            
+            var chkLimite = document.getElementById('chk-limite'); 
+            var chkMetroArt = document.getElementById('chk-metro-art');
+            var chkMetroCol = document.getElementById('chk-metro-col');
+            var chkMetroExp = document.getElementById('chk-metro-exp');
+            var chkPref = document.getElementById('chk-pref');
+            var chkSecVeh = document.getElementById('chk-sec-veh');
+            var chkSecRes = document.getElementById('chk-sec-res');
+            var chkSecPas = document.getElementById('chk-sec-pas');
+            var chkSecAla = document.getElementById('chk-sec-ala');
+            var chkSecciones = document.getElementById('chk-secciones');
+
+            layerLimite.setVisible(chkLimite && chkLimite.checked);
+            layerMetroArterial.setVisible(chkMetroArt && chkMetroArt.checked && z >= 13);
+            layerMetroColectora.setVisible(chkMetroCol && chkMetroCol.checked && z >= 13);
+            layerMetroExpresa.setVisible(chkMetroExp && chkMetroExp.checked && z >= 13);
+            
+            var showLocales = z >= 13;
+            layerPref.setVisible(chkPref && chkPref.checked && showLocales);
+            layerSecVehicular.setVisible(chkSecVeh && chkSecVeh.checked && showLocales);
+            layerSecRestringido.setVisible(chkSecRes && chkSecRes.checked && showLocales);
+            layerSecPasaje.setVisible(chkSecPas && chkSecPas.checked && showLocales);
+            layerSecAlameda.setVisible(chkSecAla && chkSecAla.checked && showLocales);
+            
+            layerSecciones.setVisible(chkSecciones && chkSecciones.checked && z >= 16);
+        }
+        
+        map.getView().on('change:resolution', actualizarVisibilidadCapas);
+        
+        ['chk-pref', 'chk-secciones', 'chk-limite'].forEach(id => {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('change', actualizarVisibilidadCapas);
+        });
+
+        document.getElementById('sat-opacity').addEventListener('input', function(e) { googleSat.setOpacity(parseFloat(e.target.value)); });
+        
+        var panel = document.getElementById('panel-usos');
+        var btnAbrirPanel = document.getElementById('btn-abrir-panel');
+        var btnCerrarPanel = document.getElementById('btn-cerrar-panel');
+
+        btnCerrarPanel.addEventListener('click', function() { 
+            panel.classList.add('oculto'); 
+            btnAbrirPanel.style.display = 'flex'; 
+        });
+        
+        btnAbrirPanel.addEventListener('click', function() { 
+            panel.classList.remove('oculto'); 
+            this.style.display = 'none'; 
+        });
+
+        if (window.innerWidth <= 896) {
+            panel.classList.add('oculto');
+            btnAbrirPanel.style.display = 'flex';
+        } else {
+            panel.classList.remove('oculto');
+            btnAbrirPanel.style.display = 'none';
+        }
+

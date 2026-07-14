@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mt1.google.com; connect-src 'self' https://mt1.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
+        
+        <link rel="stylesheet" href="vendor/openlayers/ol.css">
+        <link rel="stylesheet" href="css/main.css">
+        <title>Sistema Vial - San Borja</title>
+    </head>
+    <body>
+        <div id="left-panel">
+            <div id="title-container">
+                <h1>Municipalidad de San Borja</h1>
+                <h2>Ordenanza que establece la clasificación de las vías locales y aprueba las secciones viales en el distrito</h2>
+                <h3>Visor de Clasificación y Secciones Viales</h3>
+            </div>
+            <div id="search-container">
+                <input type="text" id="buscador-vias" placeholder="🔍 Buscar vías metropolitanas o locales..." autocomplete="off">
+                <div id="lista-resultados"></div>
+            </div>
+        </div>
+
+        <button id="btn-info-title" class="info-title-button" title="Mostrar información del visor" aria-label="Mostrar información del visor">i</button>
+
+        <div id="map">
+            <div id="capa-protectora"></div>
+        </div>
+        
+        <div id="popup" class="ol-popup">
+            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+            <div id="popup-content"></div>
+        </div>
+
+        <button id="btn-abrir-panel" title="Abrir Leyenda de Capas">☰</button>
+
+        <div id="welcome-modal">
+            <div class="modal-content">
+                <span id="btn-cerrar-portada" class="close-modal-icon" title="Cerrar">&#10005;</span>
+                
+                <img class="modal-logo" src="Escudo_de_San_Borja.png" alt="Escudo de San Borja">
+                <h2>Municipalidad de San Borja</h2>
+                <h3>Visor de Clasificación y Secciones Viales</h3>
+                <p>Este visor permite consultar de forma interactiva la clasificación de las vías y las secciones viales normativas del distrito.</p>
+                <hr class="modal-divider">
+                <p class="modal-help-title">¿Cómo usar el visor?</p>
+                <ul>
+                    <li>Ingrese el nombre de una vía en el buscador para ubicarla rápidamente.</li>
+                    <li>Haga clic sobre cualquier calle del mapa para ver su información.</li>
+                    <li>Cuando corresponda, descargue la sección vial normativa disponible para cada vía.</li>
+                </ul>
+                <div class="modal-buttons">
+                    <button id="btn-ingresar-visor" class="btn-ingresar">Ingresar al visor</button>
+                </div>
+                <div class="source">
+                    Fuente: Municipalidad de San Borja
+                    <span class="privacy-note">Este visor utiliza datos públicos y no recopila información personal.</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-usos">
+            <div class="cabecera-verde">
+                <button id="btn-cerrar-panel" title="Ocultar Panel">✖</button>
+                <h4 class="panel-eyebrow">Clasificación del Sistema Vial</h4>
+                <h3 class="panel-title">Leyenda</h3>
+            </div>
+            
+            <div id="contenido-scrollable">
+                <p class="panel-help">Active las capas para visualizarlas. <b>Haga clic en el nombre</b> de la categoría para leer su definición.</p>
+                
+                <div class="layer-toggle layer-border-limit">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-limite" checked>
+                        <span class="layer-title" data-toggle-checkbox="chk-limite">Límite distrital de San Borja</span>
+                    </div>
+                </div>
+
+                <div class="layer-toggle layer-border-metro">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-metro" checked>
+                        <span class="layer-title" data-toggle-def="def-metro">Vía Metropolitana ▾</span>
+                    </div>
+                    <div class="layer-def" id="def-metro">Corresponden a aquellas definidas por la Ordenanza N.º 341-MML y sus adendas. Tienen función estructural en la ciudad y atraviesan el distrito conectándolo a escala urbana y metropolitana, la gestión local sobre ellas está supeditada a las normas metropolitanas y la coordinación intergubernamental.</div>
+                    <div class="sub-layer-container">
+                        <div class="sub-layer layer-border-metro-art">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-metro-art" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-metro-art">Arteriales</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-metro-col">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-metro-col" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-metro-col">Colectoras</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-metro-exp">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-metro-exp" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-metro-exp">Expresa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layer-toggle layer-border-pref">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-pref" checked>
+                        <span class="layer-title" data-toggle-def="def-pref">Vía Local Principal (Preferencial) ▾</span>
+                    </div>
+                    <div class="layer-def" id="def-pref">Ejes arteriales del distrito con función de conectividad entre sectores urbanos y acceso a centralidades.</div>
+                </div>
+
+                <div class="layer-toggle layer-border-sec">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-sec" checked>
+                        <span class="layer-title" data-toggle-def="def-sec">Vía Local Secundaria ▾</span>
+                    </div>
+                    <div class="layer-def layer-def-flat" id="def-sec">Calles de escala barrial o vecinal que distribuyen el tránsito local.</div>
+                    
+                    <div class="sub-layer-container">
+                        <div class="sub-layer layer-border-sec-veh">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-sec-veh" checked>
+                                <span class="layer-title" data-toggle-def="def-sec-veh">Destinadas al tránsito vehicular</span>
+                            </div>
+                            <div class="layer-def" id="def-sec-veh">Diseñadas para el tránsito de vehículos motorizados, incluyendo accesos a viviendas y equipamientos.</div>
+                        </div>
+                        <div class="sub-layer layer-border-sec-res">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-sec-res" checked>
+                                <span class="layer-title" data-toggle-def="def-sec-res">Con restricción vehicular ▾</span>
+                            </div>
+                            <div class="layer-def" id="def-sec-res">Incluyen pasajes y alamedas donde el tránsito vehicular se restringe total o parcialmente para priorizar la movilidad peatonal o la recreación.</div>
+                            
+                            <div class="sub-layer-container sub-layer-nested">
+                                <div class="sub-layer sub-layer-compact layer-border-sec-pas">
+                                    <div class="layer-header">
+                                        <input type="checkbox" id="chk-sec-pas" checked>
+                                        <span class="layer-title" data-toggle-def="def-sec-pas">Pasaje ▾</span>
+                                    </div>
+                                    <div class="layer-def" id="def-sec-pas">Vía de circulación principalmente peatonal, está delimitado por límite de propiedad privada, formando un corredor que restringe el paso vehicular, excepto para vehículos de emergencia como ambulancias, carros de bomberos o policías.</div>
+                                </div>
+                                <div class="sub-layer sub-layer-compact sub-layer-spaced layer-border-sec-ala">
+                                    <div class="layer-header">
+                                        <input type="checkbox" id="chk-sec-ala" checked>
+                                        <span class="layer-title" data-toggle-def="def-sec-ala">Alameda ▾</span>
+                                    </div>
+                                    <div class="layer-def" id="def-sec-ala">Vía urbana que se caracteriza por contar con diseño paisajístico, delimitada a ambos lados por áreas verdes, árboles o jardineras que forman un corredor arborizado continuo.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layer-toggle layer-border-secciones">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-secciones" checked>
+                        <span class="layer-title" data-toggle-checkbox="chk-secciones">Líneas de Secciones Viales</span>
+                    </div>
+                </div>
+
+                <div class="slider-container">
+                    <label for="sat-opacity">Transparencia del Satélite</label>
+                    <input type="range" id="sat-opacity" min="0" max="1" step="0.1" value="0.9">
+                </div>
+            </div>
+        </div>
+
+        <script src="vendor/openlayers/ol.js"></script>
+        
+        <script src="layers/limite_distrital_0.js"></script>
+        <script src="layers/red_vial_1.js"></script>
+        <script src="layers/Secciones_Viales_2.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/layers.js"></script>
+        <script src="js/map.js"></script>
+        <script src="js/popup.js"></script>
+        <script src="js/search.js"></script>
+        <script src="js/app.js"></script>
+    </body>
+</html>
