@@ -43,6 +43,18 @@ Visor estatico basado en OpenLayers para consultar la clasificacion vial y las s
 4. Si se publica con carga moderna de datos, usar `data/*.geojson` mediante `fetch`; por ahora se conservan `layers/*.js` para abrir el visor directamente.
 5. Optimizar datos geograficos si crecen: compresion gzip/brotli, simplificacion de geometria o carga por demanda.
 
+## Configuracion recomendada de cabeceras de seguridad
+
+El archivo `vercel.json` contiene las cabeceras usadas para las pruebas en Vercel, pero no sera leido por el servidor institucional. Para el despliegue en infraestructura del Gobierno, OGTI debe configurar las cabeceras en el servidor web o proxy reverso.
+
+Referencias listas para OGTI:
+
+- Nginx: `docs/server-security-headers.nginx.conf`
+- Apache: `docs/server-security-headers.apache.htaccess`
+- Nota de entrega y WAF: `docs/institutional-security-handoff.md`
+
+El WAF no requiere cambios en el codigo del visor. Debe aplicarse como capa externa delante del servidor, mediante el WAF o proxy de seguridad institucional definido por OGTI.
+
 ## Verificacion rapida
 
 Abrir `index.html` en el navegador. Si se sirve desde un hosting estatico, mantener la misma estructura de carpetas.

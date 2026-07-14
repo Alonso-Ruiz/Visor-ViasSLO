@@ -1,7 +1,9 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const targetUrl = __ENV.TARGET_URL || 'https://TU_URL_DE_VERCEL.vercel.app/';
+// Limpiamos la URL base para asegurar que no termine en '/'
+const rawTargetUrl = __ENV.TARGET_URL || 'https://visor-vias-slo.vercel.app/';
+const targetUrl = rawTargetUrl.endsWith('/') ? rawTargetUrl.slice(0, -1) : rawTargetUrl;
 
 export const options = {
   scenarios: {
@@ -50,7 +52,11 @@ const staticAssets = [
 
 export default function () {
   for (const path of staticAssets) {
-    const res = http.get(new URL(path, targetUrl).toString(), {
+    // Aseguramos que el path empiece con '/'
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    const fullUrl = `${targetUrl}${cleanPath}`;
+
+    const res = http.get(fullUrl, {
       tags: { asset: path }
     });
 

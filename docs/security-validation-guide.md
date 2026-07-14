@@ -83,4 +83,4 @@ Estas medidas no se pueden garantizar solo desde el codigo estatico:
 - Monitoreo de disponibilidad, trafico y eventos.
 - Backups y procedimiento de recuperacion.
 
-Usar `docs/server-security-headers.nginx.conf` como referencia para Nginx o pedir a OGTI su equivalente en Apache/IIS.
+Usar `docs/server-security-headers.nginx.conf` como referencia para Nginx, `docs/server-security-headers.apache.htaccess` como referencia para Apache, o pedir a OGTI su equivalente en IIS.
