@@ -29,3 +29,15 @@ var style_subsectores_1 = function(feature, resolution){
 
     return style;
 };
+
+var style_subsectores_1_label = function(feature, resolution){
+    var labelText = "";
+    if (feature.get("RefName") !== null) {
+        labelText = String(feature.get("RefName"));
+    }
+
+    return [new ol.style.Style({
+        text: createTextStyle(feature, resolution, labelText, "13.0px 'Arial Black', sans-serif",
+                              "#ffffff", "point", "#05009a", 4.0)
+    })];
+};

@@ -1,7 +1,7 @@
         var map = new ol.Map({
             target: 'map',
             renderer: ['webgl', 'canvas'],
-            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerHighlight, layerLimite],
+            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
             view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
             controls: [new ol.control.ScaleLine()]
         });
@@ -38,9 +38,9 @@
                 return f;
             }, { hitTolerance: 10 }); 
             
-            if (feature && clickedLayer === layerSectores) {
+            if (feature && (clickedLayer === layerSectores || clickedLayer === layerSectoresLabels)) {
                 mostrarPopupSector(feature, evt.coordinate, 'sector');
-            } else if (feature && clickedLayer === layerSubsectores) {
+            } else if (feature && (clickedLayer === layerSubsectores || clickedLayer === layerSubsectoresLabels)) {
                 mostrarPopupSector(feature, evt.coordinate, 'subsector');
             } else if (feature && [layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre].includes(clickedLayer)) {
                 mostrarPopupTorres(feature, evt.coordinate);
@@ -251,6 +251,8 @@
             layerLimite.setVisible(chkLimite && chkLimite.checked);
             layerSectores.setVisible(chkSectorPol && chkSectorPol.checked && z >= 13);
             layerSubsectores.setVisible(chkSubsector && chkSubsector.checked && z >= 14);
+            layerSectoresLabels.setVisible(chkSectorPol && chkSectorPol.checked && z >= 13);
+            layerSubsectoresLabels.setVisible(chkSubsector && chkSubsector.checked && z >= 14);
             layerTorresAlameda.setVisible(chkTorresAlameda && chkTorresAlameda.checked && z >= 13);
             layerTorresPasaje.setVisible(chkTorresPasaje && chkTorresPasaje.checked && z >= 13);
             layerTorresServidumbre.setVisible(chkTorresServidumbre && chkTorresServidumbre.checked && z >= 13);

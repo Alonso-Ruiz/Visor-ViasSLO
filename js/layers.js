@@ -137,6 +137,8 @@
         var layerSecciones = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSecciones) }), style: styleSeccionesFn, zIndex: 8, declutter: true });
         var layerSectores = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSectores) }), style: style_Sectores_2, zIndex: 2, declutter: true });
         var layerSubsectores = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSubsectores) }), style: style_subsectores_1, zIndex: 3, declutter: true });
+        var layerSectoresLabels = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSectores) }), style: style_Sectores_2_label, zIndex: 11 });
+        var layerSubsectoresLabels = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSubsectores) }), style: style_subsectores_1_label, zIndex: 11 });
 
         var featsTorresAlameda = [];
         var featsTorresPasaje = [];
@@ -153,9 +155,9 @@
             }
         });
 
-        var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: style_EPIOFICIAL_0, zIndex: 4, declutter: true });
-        var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: style_EPIOFICIAL_0, zIndex: 4, declutter: true });
-        var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: style_EPIOFICIAL_0, zIndex: 4, declutter: true });
+        var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: style_PlantasdeAlamedasypasajes_1, zIndex: 4, declutter: true });
+        var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: style_PlantasdeAlamedasypasajes_1, zIndex: 4, declutter: true });
+        var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: style_PlantasdeAlamedasypasajes_1, zIndex: 4, declutter: true });
 
         var sourceHighlight = new ol.source.Vector();
         var layerHighlight = new ol.layer.Vector({ source: sourceHighlight, style: styleHighlightFn, zIndex: 12 });

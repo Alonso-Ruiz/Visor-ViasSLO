@@ -71,11 +71,26 @@
             tabla.className = 'popup-tabla';
             crearFilaSegura(tabla, 'Tipo', fixMojibake(tipo));
             crearFilaSegura(tabla, 'Nombre', fixMojibake(p.NOMBRE || '-'));
-            crearFilaSegura(tabla, 'Codigo', getProp(p, 'CODIGO', 'C\u00d3DIGO') || '-');
+            var codigo = getProp(p, 'CODIGO', 'C\u00d3DIGO', 'CÃ“DIGO') || '-';
+            crearFilaSegura(tabla, 'Codigo', codigo);
             crearFilaSegura(tabla, 'Clasificacion', p.CLASIFICAC || '-');
             crearFilaSegura(tabla, 'Area', p.AREA ? Number(p.AREA).toLocaleString('es-PE') + ' m2' : '-');
 
             content.appendChild(tabla);
+
+            var linkRaw = obtenerLinkDocumento(p, null);
+            var urlPdf = construirUrlDocumento(linkRaw, codigo);
+            if (urlPdf) {
+                var btn = document.createElement('a');
+                btn.href = urlPdf;
+                btn.target = "_blank";
+                btn.rel = "noopener noreferrer";
+                btn.className = "btn-pdf";
+                btn.style.marginTop = "15px";
+                btn.textContent = "VER PLANTA (PDF)";
+                content.appendChild(btn);
+            }
+
             overlay.setPosition(coordinate);
         }
 
@@ -147,6 +162,12 @@
                 (fallbackProps ? (fallbackProps.LINKVERCEL || fallbackProps.linkvercel) : '') ||
                 props.LINK || props.link || getProp(props, 'SECCI\u00d3N_') ||
                 (fallbackProps ? (fallbackProps.LINK || fallbackProps.link || getProp(fallbackProps, 'SECCI\u00d3N_')) : null) ||
+                '';
+        }
+
+        function obtenerLinkFranjas(props, fallbackProps) {
+            return props.FRANJAS || props.franjas ||
+                (fallbackProps ? (fallbackProps.FRANJAS || fallbackProps.franjas) : '') ||
                 '';
         }
 
@@ -222,6 +243,7 @@
             var tramo = p.TRAMO || (pSec ? pSec.TRAMO : null) || "-";
             var anchoRaw = p.ANCHO || p.ANCHO2 || (pSec ? (pSec.ANCHO || pSec.ANCHO2) : null) || "-";
             var linkRaw = obtenerLinkDocumento(p, pSec);
+            var franjasRaw = obtenerLinkFranjas(p, pSec);
 
             var tipoMetro = obtenerTipoMetropolitano(p) || (pSec ? obtenerTipoMetropolitano(pSec) : "");
             var esMetropolitana = !!tipoMetro || (p.NIVEL && !String(p.NIVEL).toUpperCase().includes('LOCALES')) || (String(clasificacion).toUpperCase().includes('METROPOLITANA')) ? true : false;
@@ -258,15 +280,17 @@
                         var props = feat.getProperties();
                         var cod = String(getProp(props, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
                         var l = obtenerLinkDocumento(props, null);
+                        var fr = obtenerLinkFranjas(props, null);
                         var nombreTramo = props.TRAMO || "-";
                         
-                        if ((!l || l === "-") && cod !== "-") {
+                        if (((!l || l === "-") || (!fr || fr === "-")) && cod !== "-") {
                             var secFeatures = layerSecciones.getSource().getFeatures();
                             for (var i = 0; i < secFeatures.length; i++) {
                                 var fProps = secFeatures[i].getProperties();
                                 var fCod = String(getProp(fProps, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
                                 if (fCod === cod) {
-                                    l = obtenerLinkDocumento(fProps, null);
+                                    if (!l || l === "-") l = obtenerLinkDocumento(fProps, null);
+                                    if (!fr || fr === "-") fr = obtenerLinkFranjas(fProps, null);
                                     nombreTramo = fProps.TRAMO || nombreTramo;
                                     break;
                                 }
@@ -277,7 +301,15 @@
                             var urlFinal = construirUrlDocumento(l, cod);
                             if (urlFinal && !linksUnicos.includes(urlFinal)) {
                                 linksUnicos.push(urlFinal);
-                                tramosConLinks.push({ url: urlFinal, tramo: fixMojibake(nombreTramo) });
+                                tramosConLinks.push({ url: urlFinal, tramo: fixMojibake(nombreTramo), tipo: 'Seccion vial' });
+                            }
+                        }
+
+                        if (fr && String(fr).trim() !== "" && fr !== "-") {
+                            var urlFranjas = construirUrlDocumento(fr, cod);
+                            if (urlFranjas && !linksUnicos.includes(urlFranjas)) {
+                                linksUnicos.push(urlFranjas);
+                                tramosConLinks.push({ url: urlFranjas, tramo: fixMojibake(nombreTramo), tipo: 'Franjas' });
                             }
                         }
                     });
@@ -285,7 +317,15 @@
                     var urlFinal = construirUrlDocumento(linkRaw, codigoFinal);
                     if (urlFinal) {
                         linksUnicos.push(urlFinal);
-                        tramosConLinks.push({ url: urlFinal, tramo: fixMojibake(tramo) });
+                        tramosConLinks.push({ url: urlFinal, tramo: fixMojibake(tramo), tipo: 'Seccion vial' });
+                    }
+
+                    if (franjasRaw && String(franjasRaw).trim() !== "" && franjasRaw !== "-") {
+                        var urlFranjas = construirUrlDocumento(franjasRaw, codigoFinal);
+                        if (urlFranjas && !linksUnicos.includes(urlFranjas)) {
+                            linksUnicos.push(urlFranjas);
+                            tramosConLinks.push({ url: urlFranjas, tramo: fixMojibake(tramo), tipo: 'Franjas' });
+                        }
                     }
                 }
 
@@ -312,7 +352,7 @@
                         linksContainer.style.cssText = 'max-height: 140px; overflow-y: auto; margin-top: 12px; border-top: 1px dashed #eee; padding-top: 10px; background-color: #fcfcfc; border-radius: 4px;';
                         var tituloLinks = document.createElement('div');
                         tituloLinks.style.cssText = 'font-size: 11.5px; color: #555; text-align: center; margin-bottom: 8px; font-weight: bold;';
-                        tituloLinks.textContent = 'Esta vía cuenta con ' + linksUnicos.length + ' secciones normativas:';
+                        tituloLinks.textContent = 'Esta via cuenta con ' + linksUnicos.length + ' documentos normativos:';
                         linksContainer.appendChild(tituloLinks);
                     } else {
                         linksContainer.style.marginTop = '15px';
@@ -332,9 +372,9 @@
                             aBtn.title = item.tramo; 
                             var textoTramo = item.tramo !== "-" ? item.tramo : "Tramo " + (index + 1);
                             if (textoTramo.length > 28) textoTramo = textoTramo.substring(0, 28) + "...";
-                            aBtn.textContent = "📄 " + textoTramo;
+                            aBtn.textContent = item.tipo + " - " + textoTramo;
                         } else {
-                            aBtn.textContent = "📄 VER SECCIÓN VIAL (PDF)";
+                            aBtn.textContent = item.tipo === 'Franjas' ? "VER FRANJAS (PDF)" : "VER SECCION VIAL (PDF)";
                         }
                         linksContainer.appendChild(aBtn);
                     });

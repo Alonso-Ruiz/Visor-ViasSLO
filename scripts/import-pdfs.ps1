@@ -2,12 +2,25 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$SourceDir,
 
-    [string]$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
+    [string]$ProjectRoot = "",
 
-    [switch]$Overwrite
+    [switch]$Overwrite,
+
+    [switch]$ReportOnly
 )
 
 $ErrorActionPreference = "Stop"
+
+$scriptDir = $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($scriptDir)) {
+    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrWhiteSpace($scriptDir)) {
+    $scriptDir = (Get-Location).Path
+}
+if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
+    $ProjectRoot = (Resolve-Path (Join-Path $scriptDir "..")).Path
+}
 
 function Resolve-FullPath {
     param([Parameter(Mandatory = $true)][string]$Path)
@@ -32,11 +45,11 @@ function Get-ExpectedPdfName {
         return $null
     }
 
-    if ([System.IO.Path]::GetExtension($leaf) -eq "") {
+    if ($leaf -notmatch "\.pdf$") {
         $leaf = "$leaf.pdf"
     }
 
-    if ([System.IO.Path]::GetExtension($leaf).ToLowerInvariant() -ne ".pdf") {
+    if ($leaf -notmatch "\.pdf$") {
         return $null
     }
 
@@ -64,6 +77,11 @@ if (-not (Test-Path -LiteralPath $layerPath)) {
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 
 $sourcePdfs = Get-ChildItem -LiteralPath $sourcePath -Recurse -File -Filter "*.pdf"
+$sourceNames = New-Object "System.Collections.Generic.HashSet[string]" ([StringComparer]::OrdinalIgnoreCase)
+foreach ($file in $sourcePdfs) {
+    [void]$sourceNames.Add($file.Name)
+}
+
 $destinationBefore = Get-ChildItem -LiteralPath $pdfDir -File -Filter "*.pdf" -ErrorAction SilentlyContinue
 $destinationNames = New-Object "System.Collections.Generic.HashSet[string]" ([StringComparer]::OrdinalIgnoreCase)
 foreach ($file in $destinationBefore) {
@@ -86,6 +104,17 @@ $copyReport = New-Object System.Collections.Generic.List[object]
 foreach ($file in $sourcePdfs) {
     $targetPath = Join-Path $pdfDir $file.Name
     $exists = Test-Path -LiteralPath $targetPath
+
+    if ($ReportOnly) {
+        $copyReport.Add([pscustomobject]@{
+            Status = $(if ($exists) { "report_only_exists" } else { "report_only_new" })
+            FileName = $file.Name
+            SourcePath = $file.FullName
+            TargetPath = $targetPath
+            SizeBytes = $file.Length
+        })
+        continue
+    }
 
     if ($exists -and -not $Overwrite) {
         $copyReport.Add([pscustomobject]@{
@@ -110,27 +139,51 @@ foreach ($file in $sourcePdfs) {
     })
 }
 
-$layerText = Get-Content -LiteralPath $layerPath -Raw -Encoding UTF8
-$match = [regex]::Match($layerText, "var\s+json_red_vial_1\s*=\s*(\{.*\})\s*;?\s*$", [System.Text.RegularExpressions.RegexOptions]::Singleline)
-if (-not $match.Success) {
-    throw "No se pudo leer el JSON dentro de layers\red_vial_1.js"
-}
-
-$layerJson = $match.Groups[1].Value | ConvertFrom-Json
 $expectedNames = New-Object "System.Collections.Generic.HashSet[string]" ([StringComparer]::OrdinalIgnoreCase)
-foreach ($feature in $layerJson.features) {
-    $fromLinkVercel = Get-ExpectedPdfName $feature.properties.LINKVERCEL
-    if ($fromLinkVercel) {
-        [void]$expectedNames.Add($fromLinkVercel)
+
+function Add-ExpectedNamesFromLayer {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    if (-not (Test-Path -LiteralPath $Path)) {
+        return
     }
 
-    $fromLink = Get-ExpectedPdfName $feature.properties.LINK
-    if ($fromLink) {
-        [void]$expectedNames.Add($fromLink)
+    $layerText = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    $match = [regex]::Match($layerText, "var\s+json_[A-Za-z0-9_]+\s*=\s*(\{.*\})\s*;?\s*$", [System.Text.RegularExpressions.RegexOptions]::Singleline)
+    if (-not $match.Success) {
+        throw "No se pudo leer el JSON dentro de $Path"
+    }
+
+    foreach ($linkMatch in [regex]::Matches($layerText, '"LINKVERCEL"\s*:\s*"([^"]+)"')) {
+        $fromLinkVercel = Get-ExpectedPdfName $linkMatch.Groups[1].Value
+        if ($fromLinkVercel) {
+            [void]$expectedNames.Add($fromLinkVercel)
+        }
+    }
+
+    foreach ($linkMatch in [regex]::Matches($layerText, '"LINK"\s*:\s*"([^"]+)"')) {
+        $fromLink = Get-ExpectedPdfName $linkMatch.Groups[1].Value
+        if ($fromLink) {
+            [void]$expectedNames.Add($fromLink)
+        }
     }
 }
+
+Add-ExpectedNamesFromLayer -Path (Join-Path $projectPath "layers\red_vial_1.js")
+Add-ExpectedNamesFromLayer -Path (Join-Path $projectPath "layers\Secciones_Viales_3_0.js")
+Add-ExpectedNamesFromLayer -Path (Join-Path $projectPath "layers\Secciones_Viales_2.js")
+Add-ExpectedNamesFromLayer -Path (Join-Path $projectPath "layers\PlantasdeAlamedasypasajes_1.js")
+[void]$expectedNames.Add("VLS-AL-P11_Alameda_Jose_Carlos_Mariategui.pdf")
 
 $destinationAfter = Get-ChildItem -LiteralPath $pdfDir -File -Filter "*.pdf" -ErrorAction SilentlyContinue
+
+if (-not $ReportOnly) {
+    $manifestPath = Join-Path $projectPath "js\pdf-manifest.js"
+    $manifestNames = @($destinationAfter | Sort-Object Name | ForEach-Object { $_.Name })
+    $manifestJson = $manifestNames | ConvertTo-Json -Depth 1
+    Set-Content -LiteralPath $manifestPath -Value "window.PDF_MANIFEST = $manifestJson;" -Encoding UTF8
+}
+
 $destinationAfterNames = New-Object "System.Collections.Generic.HashSet[string]" ([StringComparer]::OrdinalIgnoreCase)
 foreach ($file in $destinationAfter) {
     [void]$destinationAfterNames.Add($file.Name)
@@ -138,6 +191,12 @@ foreach ($file in $destinationAfter) {
 
 $missingReport = foreach ($name in ($expectedNames | Sort-Object)) {
     if (-not $destinationAfterNames.Contains($name)) {
+        [pscustomobject]@{ ExpectedFileName = $name }
+    }
+}
+
+$missingSourceReport = foreach ($name in ($expectedNames | Sort-Object)) {
+    if (-not $sourceNames.Contains($name)) {
         [pscustomobject]@{ ExpectedFileName = $name }
     }
 }
@@ -154,19 +213,24 @@ $unmatchedReport = foreach ($file in ($destinationAfter | Sort-Object Name)) {
 
 $copyReportPath = Join-Path $reportDir "pdf-copy-$timestamp.csv"
 $duplicateReportPath = Join-Path $reportDir "pdf-duplicates-$timestamp.csv"
+$missingSourceReportPath = Join-Path $reportDir "pdf-missing-source-$timestamp.csv"
 $missingReportPath = Join-Path $reportDir "pdf-missing-$timestamp.csv"
 $unmatchedReportPath = Join-Path $reportDir "pdf-unmatched-$timestamp.csv"
 $summaryPath = Join-Path $reportDir "pdf-summary-$timestamp.txt"
 
 $copyReport | Export-Csv -LiteralPath $copyReportPath -NoTypeInformation -Encoding UTF8
 $duplicateReport | Export-Csv -LiteralPath $duplicateReportPath -NoTypeInformation -Encoding UTF8
+$missingSourceReport | Export-Csv -LiteralPath $missingSourceReportPath -NoTypeInformation -Encoding UTF8
 $missingReport | Export-Csv -LiteralPath $missingReportPath -NoTypeInformation -Encoding UTF8
 $unmatchedReport | Export-Csv -LiteralPath $unmatchedReportPath -NoTypeInformation -Encoding UTF8
 
 $copiedCount = ($copyReport | Where-Object { $_.Status -eq "copied" }).Count
 $overwrittenCount = ($copyReport | Where-Object { $_.Status -eq "overwritten" }).Count
 $skippedCount = ($copyReport | Where-Object { $_.Status -eq "skipped_exists" }).Count
+$reportOnlyNewCount = ($copyReport | Where-Object { $_.Status -eq "report_only_new" }).Count
+$reportOnlyExistsCount = ($copyReport | Where-Object { $_.Status -eq "report_only_exists" }).Count
 $duplicateCount = @($duplicateReport).Count
+$missingSourceCount = @($missingSourceReport).Count
 $missingCount = @($missingReport).Count
 $unmatchedCount = @($unmatchedReport).Count
 
@@ -177,17 +241,22 @@ Source: $sourcePath
 Destination: $pdfDir
 
 Source PDFs found: $($sourcePdfs.Count)
+Report only: $ReportOnly
 Copied: $copiedCount
 Overwritten: $overwrittenCount
 Skipped because already existed: $skippedCount
+Report-only new PDFs: $reportOnlyNewCount
+Report-only existing PDFs: $reportOnlyExistsCount
 Duplicate source entries: $duplicateCount
 Expected PDFs from layer: $($expectedNames.Count)
+Missing expected PDFs in source: $missingSourceCount
 Missing expected PDFs: $missingCount
 PDFs in destination not referenced by layer: $unmatchedCount
 
 Reports:
 - $copyReportPath
 - $duplicateReportPath
+- $missingSourceReportPath
 - $missingReportPath
 - $unmatchedReportPath
 "@
