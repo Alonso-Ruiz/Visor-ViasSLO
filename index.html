@@ -80,6 +80,28 @@
                     </div>
                 </div>
 
+                <div class="layer-toggle layer-border-sector">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-sector" checked>
+                        <span class="layer-title" data-toggle-def="def-sector">Sectores ▾</span>
+                    </div>
+                    <div class="layer-def" id="def-sector">División territorial de referencia para la lectura urbana del distrito.</div>
+                    <div class="sub-layer-container">
+                        <div class="sub-layer layer-border-sector-pol">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-sector-pol" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-sector-pol">Sectores</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-subsector">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-subsector" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-subsector">Subsectores</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="layer-toggle layer-border-metro">
                     <div class="layer-header">
                         <input type="checkbox" id="chk-metro" checked>
@@ -165,6 +187,34 @@
                     </div>
                 </div>
 
+                <div class="layer-toggle layer-border-torres">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-torres" checked>
+                        <span class="layer-title" data-toggle-def="def-torres">Torres de San Borja &#9662;</span>
+                    </div>
+                    <div class="layer-def" id="def-torres">Clasificaci&oacute;n interna de alamedas, pasajes y servidumbres de paso del sector Torres de San Borja.</div>
+                    <div class="sub-layer-container">
+                        <div class="sub-layer layer-border-torres-alameda">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-torres-alameda" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-torres-alameda">Alameda</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-torres-pasaje">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-torres-pasaje" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-torres-pasaje">Pasaje</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-torres-servidumbre">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-torres-servidumbre" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-torres-servidumbre">Servidumbre de paso</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="slider-container">
                     <label for="sat-opacity">Transparencia del Satélite</label>
                     <input type="range" id="sat-opacity" min="0" max="1" step="0.1" value="0.9">
@@ -177,7 +227,14 @@
         <script src="layers/limite_distrital_0.js"></script>
         <script src="layers/red_vial_1.js"></script>
         <script src="layers/Secciones_Viales_2.js"></script>
+        <script src="layers/subsectores_1.js"></script>
+        <script src="layers/Sectores_2.js"></script>
+        <script src="layers/EPIOFICIAL_0.js"></script>
+        <script src="js/pdf-manifest.js"></script>
         <script src="js/utils.js"></script>
+        <script src="styles/subsectores_1_style.js"></script>
+        <script src="styles/Sectores_2_style.js"></script>
+        <script src="styles/EPIOFICIAL_0_style.js"></script>
         <script src="js/layers.js"></script>
         <script src="js/map.js"></script>
         <script src="js/popup.js"></script>

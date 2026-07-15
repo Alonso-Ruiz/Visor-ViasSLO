@@ -542,6 +542,35 @@ body {
     border-left-style: dotted;
 }
 
+.layer-border-sector {
+    border-left-color: #0f766e;
+}
+
+.layer-border-sector-pol {
+    border-left-color: #14b8a6;
+}
+
+.layer-border-subsector {
+    border-left-color: #06b6d4;
+    border-left-style: dashed;
+}
+
+.layer-border-torres {
+    border-left-color: #11dcd6;
+}
+
+.layer-border-torres-alameda {
+    border-left-color: #73c895;
+}
+
+.layer-border-torres-pasaje {
+    border-left-color: #e68b41;
+}
+
+.layer-border-torres-servidumbre {
+    border-left-color: #b8e23e;
+}
+
 .layer-header {
     display: flex;
     align-items: center;

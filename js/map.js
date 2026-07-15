@@ -1,7 +1,7 @@
         var map = new ol.Map({
             target: 'map',
             renderer: ['webgl', 'canvas'],
-            layers: [googleSat, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerHighlight, layerLimite],
+            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerHighlight, layerLimite],
             view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
             controls: [new ol.control.ScaleLine()]
         });
@@ -31,11 +31,22 @@
 
 
         map.on('singleclick', function(evt) {
+            var clickedLayer = null;
             var feature = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
-                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones) ? f : null;
+                if (l === layerLimite || l === layerHighlight || l === layerSecciones) return null;
+                clickedLayer = l;
+                return f;
             }, { hitTolerance: 10 }); 
             
-            if (feature) { mostrarPopupFeature(feature, evt.coordinate); } 
+            if (feature && clickedLayer === layerSectores) {
+                mostrarPopupSector(feature, evt.coordinate, 'sector');
+            } else if (feature && clickedLayer === layerSubsectores) {
+                mostrarPopupSector(feature, evt.coordinate, 'subsector');
+            } else if (feature && [layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre].includes(clickedLayer)) {
+                mostrarPopupTorres(feature, evt.coordinate);
+            } else if (feature) {
+                mostrarPopupFeature(feature, evt.coordinate);
+            } 
             else { overlay.setPosition(undefined); sourceHighlight.clear(); }
         });
 
@@ -166,6 +177,58 @@
             actualizarVisibilidadCapas();
         });
 
+        var chkSectorMaster = document.getElementById('chk-sector');
+        var subsSector = ['chk-sector-pol', 'chk-subsector'];
+
+        chkSectorMaster.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            subsSector.forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.checked = isChecked;
+            });
+            actualizarVisibilidadCapas();
+        });
+
+        function updateMasterSectorState() {
+            var allChecked = subsSector.every(id => document.getElementById(id).checked);
+            var anyChecked = subsSector.some(id => document.getElementById(id).checked);
+            chkSectorMaster.checked = allChecked;
+            chkSectorMaster.indeterminate = !allChecked && anyChecked;
+        }
+
+        subsSector.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                updateMasterSectorState();
+                actualizarVisibilidadCapas();
+            });
+        });
+
+        var chkTorresMaster = document.getElementById('chk-torres');
+        var subsTorres = ['chk-torres-alameda', 'chk-torres-pasaje', 'chk-torres-servidumbre'];
+
+        chkTorresMaster.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            subsTorres.forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.checked = isChecked;
+            });
+            actualizarVisibilidadCapas();
+        });
+
+        function updateMasterTorresState() {
+            var allChecked = subsTorres.every(id => document.getElementById(id).checked);
+            var anyChecked = subsTorres.some(id => document.getElementById(id).checked);
+            chkTorresMaster.checked = allChecked;
+            chkTorresMaster.indeterminate = !allChecked && anyChecked;
+        }
+
+        subsTorres.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                updateMasterTorresState();
+                actualizarVisibilidadCapas();
+            });
+        });
+
         function actualizarVisibilidadCapas() {
             var z = map.getView().getZoom();
             
@@ -179,8 +242,18 @@
             var chkSecPas = document.getElementById('chk-sec-pas');
             var chkSecAla = document.getElementById('chk-sec-ala');
             var chkSecciones = document.getElementById('chk-secciones');
+            var chkSectorPol = document.getElementById('chk-sector-pol');
+            var chkSubsector = document.getElementById('chk-subsector');
+            var chkTorresAlameda = document.getElementById('chk-torres-alameda');
+            var chkTorresPasaje = document.getElementById('chk-torres-pasaje');
+            var chkTorresServidumbre = document.getElementById('chk-torres-servidumbre');
 
             layerLimite.setVisible(chkLimite && chkLimite.checked);
+            layerSectores.setVisible(chkSectorPol && chkSectorPol.checked && z >= 13);
+            layerSubsectores.setVisible(chkSubsector && chkSubsector.checked && z >= 14);
+            layerTorresAlameda.setVisible(chkTorresAlameda && chkTorresAlameda.checked && z >= 13);
+            layerTorresPasaje.setVisible(chkTorresPasaje && chkTorresPasaje.checked && z >= 13);
+            layerTorresServidumbre.setVisible(chkTorresServidumbre && chkTorresServidumbre.checked && z >= 13);
             layerMetroArterial.setVisible(chkMetroArt && chkMetroArt.checked && z >= 13);
             layerMetroColectora.setVisible(chkMetroCol && chkMetroCol.checked && z >= 13);
             layerMetroExpresa.setVisible(chkMetroExp && chkMetroExp.checked && z >= 13);

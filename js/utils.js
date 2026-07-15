@@ -129,6 +129,21 @@ function cerrarPortada() {
             return '';
         }
 
+        function createTextStyle(feature, resolution, labelText, labelFont, labelFill, placement, bufferColor, bufferWidth) {
+            if (!labelText) return null;
+            return new ol.style.Text({
+                text: labelText,
+                font: labelFont,
+                placement: placement || 'point',
+                fill: new ol.style.Fill({ color: labelFill || '#000000' }),
+                stroke: new ol.style.Stroke({
+                    color: bufferColor || '#ffffff',
+                    width: bufferWidth || 0
+                }),
+                overflow: true
+            });
+        }
+
         function normalizarNucleoVia(nombre) {
             if (!nombre) return "";
             var n = quitarTildes(nombre).toUpperCase();
@@ -155,7 +170,13 @@ function cerrarPortada() {
         var datosLimite = typeof json_limite_distrital_0 !== 'undefined' ? json_limite_distrital_0 : null;
         var datosLocales = typeof json_red_vial_1 !== 'undefined' ? json_red_vial_1 : (typeof json_red_vial_2 !== 'undefined' ? json_red_vial_2 : null);
         var datosSecciones = typeof json_Secciones_Viales_2 !== 'undefined' ? json_Secciones_Viales_2 : (typeof json_Secciones_Viales_3 !== 'undefined' ? json_Secciones_Viales_3 : null);
+        var datosSubsectores = typeof json_subsectores_1 !== 'undefined' ? json_subsectores_1 : null;
+        var datosSectores = typeof json_Sectores_2 !== 'undefined' ? json_Sectores_2 : null;
+        var datosTorresSanBorja = typeof json_EPIOFICIAL_0 !== 'undefined' ? json_EPIOFICIAL_0 : null;
 
         preprocesarGeoJSON(datosLimite);
         preprocesarGeoJSON(datosLocales); 
         preprocesarGeoJSON(datosSecciones);
+        preprocesarGeoJSON(datosSubsectores);
+        preprocesarGeoJSON(datosSectores);
+        preprocesarGeoJSON(datosTorresSanBorja);

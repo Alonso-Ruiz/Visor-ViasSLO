@@ -1,0 +1,19 @@
+﻿PDF import summary
+Date: 2026-07-14 17:02:18
+Source: C:\Users\Alonso\Desktop\PDFs_Vias
+Destination: C:\Users\Alonso\Desktop\Visor-ViasSLO\pdf
+
+Source PDFs found: 654
+Copied: 654
+Overwritten: 0
+Skipped because already existed: 0
+Duplicate source entries: 0
+Expected PDFs from layer: 633
+Missing expected PDFs: 18
+PDFs in destination not referenced by layer: 39
+
+Reports:
+- C:\Users\Alonso\Desktop\Visor-ViasSLO\docs\pdf-import-reports\pdf-copy-20260714-170215.csv
+- C:\Users\Alonso\Desktop\Visor-ViasSLO\docs\pdf-import-reports\pdf-duplicates-20260714-170215.csv
+- C:\Users\Alonso\Desktop\Visor-ViasSLO\docs\pdf-import-reports\pdf-missing-20260714-170215.csv
+- C:\Users\Alonso\Desktop\Visor-ViasSLO\docs\pdf-import-reports\pdf-unmatched-20260714-170215.csv

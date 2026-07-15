@@ -22,9 +22,140 @@
             }
         }
 
-        function construirUrlDocumento(valorLink) {
+        function mostrarPopupSector(feature, coordinate, tipo) {
+            sourceHighlight.clear();
+            sourceHighlight.addFeature(feature);
+
+            var p = feature.getProperties();
+            var esSubsector = tipo === 'subsector';
+            var titulo = esSubsector ? 'Subsector ' + (p.RefName || '-') : 'Sector ' + (p.Sectores || '-');
+
+            content.textContent = '';
+
+            var titleDiv = document.createElement('div');
+            titleDiv.className = 'popup-titulo';
+            titleDiv.textContent = titulo;
+            content.appendChild(titleDiv);
+
+            var tabla = document.createElement('table');
+            tabla.className = 'popup-tabla';
+
+            if (esSubsector) {
+                crearFilaSegura(tabla, 'Subsector', p.RefName || '-');
+                crearFilaSegura(tabla, 'Área', p.AREA ? Number(p.AREA).toLocaleString('es-PE') + ' m²' : '-');
+            } else {
+                crearFilaSegura(tabla, 'Sector', p.Sectores || '-');
+                crearFilaSegura(tabla, 'Población 2024', p.POB__2024 ? Number(p.POB__2024).toLocaleString('es-PE') : '-');
+                crearFilaSegura(tabla, 'Área', p.AREA ? Number(p.AREA).toLocaleString('es-PE') + ' m²' : '-');
+            }
+
+            content.appendChild(tabla);
+            overlay.setPosition(coordinate);
+        }
+
+        function mostrarPopupTorres(feature, coordinate) {
+            sourceHighlight.clear();
+            sourceHighlight.addFeature(feature);
+
+            var p = feature.getProperties();
+            var tipo = p.Tipo === 'Paso de servidumbre' ? 'Servidumbre de paso' : (p.Tipo || '-');
+
+            content.textContent = '';
+
+            var titleDiv = document.createElement('div');
+            titleDiv.className = 'popup-titulo';
+            titleDiv.textContent = 'Torres de San Borja';
+            content.appendChild(titleDiv);
+
+            var tabla = document.createElement('table');
+            tabla.className = 'popup-tabla';
+            crearFilaSegura(tabla, 'Tipo', fixMojibake(tipo));
+            crearFilaSegura(tabla, 'Nombre', fixMojibake(p.NOMBRE || '-'));
+            crearFilaSegura(tabla, 'Codigo', getProp(p, 'CODIGO', 'C\u00d3DIGO') || '-');
+            crearFilaSegura(tabla, 'Clasificacion', p.CLASIFICAC || '-');
+            crearFilaSegura(tabla, 'Area', p.AREA ? Number(p.AREA).toLocaleString('es-PE') + ' m2' : '-');
+
+            content.appendChild(tabla);
+            overlay.setPosition(coordinate);
+        }
+
+        var pdfManifest = Array.isArray(window.PDF_MANIFEST) ? window.PDF_MANIFEST : [];
+        var pdfManifestPorNombre = {};
+        var pdfManifestPorCodigo = {};
+        var pdfManifestPorTitulo = {};
+
+        pdfManifest.forEach(function(fileName) {
+            var lower = String(fileName).toLowerCase();
+            pdfManifestPorNombre[lower] = fileName;
+
+            var codeMatch = String(fileName).match(/^([A-Z]{3}-[A-Z]{2}-[0-9A-Z]+)(?:_|\.pdf$)/i);
+            if (codeMatch) {
+                var code = codeMatch[1].toUpperCase();
+                if (!pdfManifestPorCodigo[code]) {
+                    pdfManifestPorCodigo[code] = fileName;
+                }
+            }
+
+            var titleKey = normalizarNombrePdf(fileName);
+            if (titleKey && !pdfManifestPorTitulo[titleKey]) {
+                pdfManifestPorTitulo[titleKey] = fileName;
+            }
+        });
+
+        function obtenerNombrePdf(valorLink) {
+            var cleaned = String(valorLink || '').trim();
+            if (!cleaned || cleaned === '-' || /^https?:\/\//i.test(cleaned)) return null;
+
+            cleaned = cleaned.replace(/\\/g, '/');
+            var leaf = cleaned.split('/').pop();
+            if (!leaf) return null;
+            if (!/\.pdf(?:$|[?#])/i.test(leaf)) leaf += ".pdf";
+            return leaf;
+        }
+
+        function normalizarNombrePdf(fileName) {
+            var base = String(fileName || '').replace(/\.pdf$/i, '');
+            base = base.replace(/^[A-Z]{3}-[A-Z]{2}-[0-9A-Z]+_?/i, '');
+            return quitarTildes(base)
+                .replace(/[^a-z0-9]+/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function construirUrlPdfLocal(valorLink, codigo) {
+            var fileName = obtenerNombrePdf(valorLink);
+            if (fileName) {
+                var exact = pdfManifestPorNombre[fileName.toLowerCase()];
+                if (exact) return "pdf/" + exact;
+            }
+
+            var code = String(codigo || '').trim().toUpperCase();
+            if (code && code !== "-" && pdfManifestPorCodigo[code]) {
+                return "pdf/" + pdfManifestPorCodigo[code];
+            }
+
+            if (fileName) {
+                var byTitle = pdfManifestPorTitulo[normalizarNombrePdf(fileName)];
+                if (byTitle) return "pdf/" + byTitle;
+            }
+
+            return fileName ? "pdf/" + fileName : null;
+        }
+
+        function obtenerLinkDocumento(props, fallbackProps) {
+            return props.LINKVERCEL || props.linkvercel ||
+                (fallbackProps ? (fallbackProps.LINKVERCEL || fallbackProps.linkvercel) : '') ||
+                props.LINK || props.link || getProp(props, 'SECCI\u00d3N_') ||
+                (fallbackProps ? (fallbackProps.LINK || fallbackProps.link || getProp(fallbackProps, 'SECCI\u00d3N_')) : null) ||
+                '';
+        }
+
+        function construirUrlDocumento(valorLink, codigo) {
             var cleaned = String(valorLink || '').trim();
             if (!cleaned || cleaned === '-') return null;
+
+            var localPdf = construirUrlPdfLocal(cleaned, codigo);
+            if (localPdf) return localPdf;
 
             if (/^https?:\/\//i.test(cleaned)) {
                 return esURLSegura(cleaned) ? cleaned : null;
@@ -90,7 +221,7 @@
             var codigoFinal = codigoClic || (pSec ? getProp(pSec, 'CODIGO', 'C\u00d3DIGO') : '-');
             var tramo = p.TRAMO || (pSec ? pSec.TRAMO : null) || "-";
             var anchoRaw = p.ANCHO || p.ANCHO2 || (pSec ? (pSec.ANCHO || pSec.ANCHO2) : null) || "-";
-            var linkRaw = p.LINK || p.link || getProp(p, 'SECCI\u00d3N_') || (pSec ? (pSec.LINK || pSec.link || getProp(pSec, 'SECCI\u00d3N_')) : null) || '';
+            var linkRaw = obtenerLinkDocumento(p, pSec);
 
             var tipoMetro = obtenerTipoMetropolitano(p) || (pSec ? obtenerTipoMetropolitano(pSec) : "");
             var esMetropolitana = !!tipoMetro || (p.NIVEL && !String(p.NIVEL).toUpperCase().includes('LOCALES')) || (String(clasificacion).toUpperCase().includes('METROPOLITANA')) ? true : false;
@@ -126,7 +257,7 @@
                     arrayDeTramosAdicionales.forEach(function(feat) {
                         var props = feat.getProperties();
                         var cod = String(getProp(props, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
-                        var l = props.LINK || props.link || getProp(props, 'SECCI\u00d3N_') || '';
+                        var l = obtenerLinkDocumento(props, null);
                         var nombreTramo = props.TRAMO || "-";
                         
                         if ((!l || l === "-") && cod !== "-") {
@@ -135,7 +266,7 @@
                                 var fProps = secFeatures[i].getProperties();
                                 var fCod = String(getProp(fProps, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
                                 if (fCod === cod) {
-                                    l = fProps.LINK || fProps.link || getProp(fProps, 'SECCI\u00d3N_') || '';
+                                    l = obtenerLinkDocumento(fProps, null);
                                     nombreTramo = fProps.TRAMO || nombreTramo;
                                     break;
                                 }
@@ -143,7 +274,7 @@
                         }
                         
                         if (l && String(l).trim() !== "" && l !== "-") {
-                            var urlFinal = construirUrlDocumento(l);
+                            var urlFinal = construirUrlDocumento(l, cod);
                             if (urlFinal && !linksUnicos.includes(urlFinal)) {
                                 linksUnicos.push(urlFinal);
                                 tramosConLinks.push({ url: urlFinal, tramo: fixMojibake(nombreTramo) });
@@ -151,7 +282,7 @@
                         }
                     });
                 } else if (!esMetropolitana && linkRaw && String(linkRaw).trim() !== "" && linkRaw !== "-") {
-                    var urlFinal = construirUrlDocumento(linkRaw);
+                    var urlFinal = construirUrlDocumento(linkRaw, codigoFinal);
                     if (urlFinal) {
                         linksUnicos.push(urlFinal);
                         tramosConLinks.push({ url: urlFinal, tramo: fixMojibake(tramo) });
