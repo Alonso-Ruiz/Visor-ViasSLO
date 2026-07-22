@@ -17,7 +17,7 @@
             <div id="title-container">
                 <h1>Municipalidad de San Borja</h1>
                 <h2>Ordenanza que establece la clasificación de las vías locales y aprueba las secciones viales en el distrito</h2>
-                <h3>Visor de Clasificación y Secciones Viales</h3>
+                <h3>Visor de Clasificación de vias y sus secciones</h3>
             </div>
             <div id="search-container">
                 <input type="text" id="buscador-vias" placeholder="🔍 Buscar vías metropolitanas o locales..." autocomplete="off">
@@ -44,7 +44,7 @@
                 
                 <img class="modal-logo" src="Escudo_de_San_Borja.png" alt="Escudo de San Borja">
                 <h2>Municipalidad de San Borja</h2>
-                <h3>Visor de Clasificación y Secciones Viales</h3>
+                <h3>Visor de Clasificación de vias y sus secciones</h3>
                 <p>Este visor permite consultar de forma interactiva la clasificación de las vías y las secciones viales normativas del distrito.</p>
                 <hr class="modal-divider">
                 <p class="modal-help-title">¿Cómo usar el visor?</p>
@@ -109,6 +109,12 @@
                     </div>
                     <div class="layer-def" id="def-metro">Corresponden a aquellas definidas por la Ordenanza N.º 341-MML y sus adendas. Tienen función estructural en la ciudad y atraviesan el distrito conectándolo a escala urbana y metropolitana, la gestión local sobre ellas está supeditada a las normas metropolitanas y la coordinación intergubernamental.</div>
                     <div class="sub-layer-container">
+                        <div class="sub-layer layer-border-metro-exp">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-metro-exp" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-metro-exp">Expresa</span>
+                            </div>
+                        </div>
                         <div class="sub-layer layer-border-metro-art">
                             <div class="layer-header">
                                 <input type="checkbox" id="chk-metro-art" checked>
@@ -119,12 +125,6 @@
                             <div class="layer-header">
                                 <input type="checkbox" id="chk-metro-col" checked>
                                 <span class="layer-title" data-toggle-checkbox="chk-metro-col">Colectoras</span>
-                            </div>
-                        </div>
-                        <div class="sub-layer layer-border-metro-exp">
-                            <div class="layer-header">
-                                <input type="checkbox" id="chk-metro-exp" checked>
-                                <span class="layer-title" data-toggle-checkbox="chk-metro-exp">Expresa</span>
                             </div>
                         </div>
                     </div>
