@@ -571,6 +571,14 @@ body {
     border-left-color: #b8e23e;
 }
 
+.layer-border-juan-xxiii {
+    border-left-color: #d01c42;
+}
+
+.layer-border-juan-xxiii-alameda {
+    border-left-color: #d01c42;
+}
+
 .layer-header {
     display: flex;
     align-items: center;

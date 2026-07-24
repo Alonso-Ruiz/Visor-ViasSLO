@@ -1,7 +1,7 @@
         var map = new ol.Map({
             target: 'map',
             renderer: ['webgl', 'canvas'],
-            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
+            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIIAlameda, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
             view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
             controls: [new ol.control.ScaleLine()]
         });
@@ -42,7 +42,7 @@
                 mostrarPopupSector(feature, evt.coordinate, 'sector');
             } else if (feature && (clickedLayer === layerSubsectores || clickedLayer === layerSubsectoresLabels)) {
                 mostrarPopupSector(feature, evt.coordinate, 'subsector');
-            } else if (feature && [layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre].includes(clickedLayer)) {
+            } else if (feature && [layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIIAlameda].includes(clickedLayer)) {
                 mostrarPopupTorres(feature, evt.coordinate);
             } else if (feature) {
                 mostrarPopupFeature(feature, evt.coordinate);
@@ -229,6 +229,32 @@
             });
         });
 
+        var chkJuanXXIIIMaster = document.getElementById('chk-juan-xxiii');
+        var subsJuanXXIII = ['chk-juan-xxiii-alameda'];
+
+        chkJuanXXIIIMaster.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            subsJuanXXIII.forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.checked = isChecked;
+            });
+            actualizarVisibilidadCapas();
+        });
+
+        function updateMasterJuanXXIIIState() {
+            var allChecked = subsJuanXXIII.every(id => document.getElementById(id).checked);
+            var anyChecked = subsJuanXXIII.some(id => document.getElementById(id).checked);
+            chkJuanXXIIIMaster.checked = allChecked;
+            chkJuanXXIIIMaster.indeterminate = !allChecked && anyChecked;
+        }
+
+        subsJuanXXIII.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                updateMasterJuanXXIIIState();
+                actualizarVisibilidadCapas();
+            });
+        });
+
         function actualizarVisibilidadCapas() {
             var z = map.getView().getZoom();
             
@@ -247,6 +273,7 @@
             var chkTorresAlameda = document.getElementById('chk-torres-alameda');
             var chkTorresPasaje = document.getElementById('chk-torres-pasaje');
             var chkTorresServidumbre = document.getElementById('chk-torres-servidumbre');
+            var chkJuanXXIIIAlameda = document.getElementById('chk-juan-xxiii-alameda');
 
             layerLimite.setVisible(chkLimite && chkLimite.checked);
             layerSectores.setVisible(chkSectorPol && chkSectorPol.checked && z >= 13);
@@ -256,6 +283,7 @@
             layerTorresAlameda.setVisible(chkTorresAlameda && chkTorresAlameda.checked && z >= 13);
             layerTorresPasaje.setVisible(chkTorresPasaje && chkTorresPasaje.checked && z >= 13);
             layerTorresServidumbre.setVisible(chkTorresServidumbre && chkTorresServidumbre.checked && z >= 13);
+            layerJuanXXIIIAlameda.setVisible(chkJuanXXIIIAlameda && chkJuanXXIIIAlameda.checked && z >= 13);
             layerMetroArterial.setVisible(chkMetroArt && chkMetroArt.checked && z >= 13);
             layerMetroColectora.setVisible(chkMetroCol && chkMetroCol.checked && z >= 13);
             layerMetroExpresa.setVisible(chkMetroExp && chkMetroExp.checked && z >= 13);

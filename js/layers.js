@@ -143,6 +143,7 @@
         var featsTorresAlameda = [];
         var featsTorresPasaje = [];
         var featsTorresServidumbre = [];
+        var featsJuanXXIIIAlameda = [];
 
         function styleTorresSanBorjaFn(feature, resolution) {
             if (feature.get('_sourceLayer') === 'alamedas_submanzanas' && typeof style_ALAMEDASDESUBMANZANAS_3 !== 'undefined') {
@@ -167,14 +168,16 @@
 
         leerFeatures(datosAlamedasSubmanzanas).forEach(function(f) {
             f.set('_sourceLayer', 'alamedas_submanzanas');
+            f.set('_grupoEspecial', 'Juan XXIII');
             f.set('Tipo', f.get('Tipo') || 'Alameda');
             f.set('NOMBRE', f.get('NOMBRE') || f.get('NOMBRE_1') || '-');
-            featsTorresAlameda.push(f);
+            featsJuanXXIIIAlameda.push(f);
         });
 
         var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
+        var layerJuanXXIIIAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsJuanXXIIIAlameda }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
 
         var sourceHighlight = new ol.source.Vector();
         var layerHighlight = new ol.layer.Vector({ source: sourceHighlight, style: styleHighlightFn, zIndex: 12 });

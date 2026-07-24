@@ -66,6 +66,7 @@
         indexarOLFeatures(layerSecRestringido.getSource().getFeatures(), false);
         indexarOLFeatures(layerSecPasaje.getSource().getFeatures(), false);
         indexarOLFeatures(layerSecAlameda.getSource().getFeatures(), false);
+        indexarOLFeatures(layerJuanXXIIIAlameda.getSource().getFeatures(), false);
         
         dictVias = Object.values(mapClasif);
         dictVias.sort((a,b) => a.nombre.localeCompare(b.nombre));

@@ -65,7 +65,7 @@
 
             var titleDiv = document.createElement('div');
             titleDiv.className = 'popup-titulo';
-            titleDiv.textContent = 'Torres de San Borja';
+            titleDiv.textContent = p._grupoEspecial || 'Torres de San Borja';
             content.appendChild(titleDiv);
 
             var tabla = document.createElement('table');
