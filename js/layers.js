@@ -144,6 +144,16 @@
         var featsTorresPasaje = [];
         var featsTorresServidumbre = [];
 
+        function styleTorresSanBorjaFn(feature, resolution) {
+            if (feature.get('_sourceLayer') === 'alamedas_submanzanas' && typeof style_ALAMEDASDESUBMANZANAS_3 !== 'undefined') {
+                return style_ALAMEDASDESUBMANZANAS_3(feature, resolution);
+            }
+            if (typeof style_PlantasdeAlamedasypasajes_2 !== 'undefined') {
+                return style_PlantasdeAlamedasypasajes_2(feature, resolution);
+            }
+            return style_PlantasdeAlamedasypasajes_1(feature, resolution);
+        }
+
         leerFeatures(datosTorresSanBorja).forEach(function(f) {
             var tipo = normalizarTextoPlano(f.get('Tipo') || '');
             if (tipo === 'alameda') {
@@ -155,9 +165,16 @@
             }
         });
 
-        var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: style_PlantasdeAlamedasypasajes_1, zIndex: 4, declutter: true });
-        var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: style_PlantasdeAlamedasypasajes_1, zIndex: 4, declutter: true });
-        var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: style_PlantasdeAlamedasypasajes_1, zIndex: 4, declutter: true });
+        leerFeatures(datosAlamedasSubmanzanas).forEach(function(f) {
+            f.set('_sourceLayer', 'alamedas_submanzanas');
+            f.set('Tipo', f.get('Tipo') || 'Alameda');
+            f.set('NOMBRE', f.get('NOMBRE') || f.get('NOMBRE_1') || '-');
+            featsTorresAlameda.push(f);
+        });
+
+        var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
+        var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
+        var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
 
         var sourceHighlight = new ol.source.Vector();
         var layerHighlight = new ol.layer.Vector({ source: sourceHighlight, style: styleHighlightFn, zIndex: 12 });

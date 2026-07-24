@@ -58,7 +58,8 @@
             sourceHighlight.addFeature(feature);
 
             var p = feature.getProperties();
-            var tipo = p.Tipo === 'Paso de servidumbre' ? 'Servidumbre de paso' : (p.Tipo || '-');
+            var tipoRaw = p.Tipo || getProp(p, 'CATEGORIA', 'CATEGORÍA') || '-';
+            var tipo = tipoRaw === 'Paso de servidumbre' ? 'Servidumbre de paso' : tipoRaw;
 
             content.textContent = '';
 
@@ -70,7 +71,7 @@
             var tabla = document.createElement('table');
             tabla.className = 'popup-tabla';
             crearFilaSegura(tabla, 'Tipo', fixMojibake(tipo));
-            crearFilaSegura(tabla, 'Nombre', fixMojibake(p.NOMBRE || '-'));
+            crearFilaSegura(tabla, 'Nombre', fixMojibake(p.NOMBRE || p.NOMBRE_1 || '-'));
             var codigo = getProp(p, 'CODIGO', 'C\u00d3DIGO', 'CÃ“DIGO') || '-';
             crearFilaSegura(tabla, 'Codigo', codigo);
             crearFilaSegura(tabla, 'Clasificacion', p.CLASIFICAC || '-');

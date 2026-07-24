@@ -168,14 +168,19 @@ function cerrarPortada() {
         }
 
         var datosLimite = typeof json_limite_distrital_0 !== 'undefined' ? json_limite_distrital_0 : null;
-        var datosLocales = typeof json_red_vial_1 !== 'undefined' ? json_red_vial_1 : (typeof json_red_vial_2 !== 'undefined' ? json_red_vial_2 : null);
-        var datosSecciones = typeof json_Secciones_Viales_3_0 !== 'undefined' ? json_Secciones_Viales_3_0 :
+        var datosLocales = typeof json_red_vial_0 !== 'undefined' ? json_red_vial_0 :
+            (typeof json_red_vial_1 !== 'undefined' ? json_red_vial_1 :
+            (typeof json_red_vial_2 !== 'undefined' ? json_red_vial_2 : null));
+        var datosSecciones = typeof json_Secciones_Viales_3_1 !== 'undefined' ? json_Secciones_Viales_3_1 :
+            (typeof json_Secciones_Viales_3_0 !== 'undefined' ? json_Secciones_Viales_3_0 :
             (typeof json_Secciones_Viales_2 !== 'undefined' ? json_Secciones_Viales_2 :
-            (typeof json_Secciones_Viales_3 !== 'undefined' ? json_Secciones_Viales_3 : null));
+            (typeof json_Secciones_Viales_3 !== 'undefined' ? json_Secciones_Viales_3 : null)));
         var datosSubsectores = typeof json_subsectores_1 !== 'undefined' ? json_subsectores_1 : null;
         var datosSectores = typeof json_Sectores_2 !== 'undefined' ? json_Sectores_2 : null;
-        var datosTorresSanBorja = typeof json_PlantasdeAlamedasypasajes_1 !== 'undefined' ? json_PlantasdeAlamedasypasajes_1 :
-            (typeof json_EPIOFICIAL_0 !== 'undefined' ? json_EPIOFICIAL_0 : null);
+        var datosTorresSanBorja = typeof json_PlantasdeAlamedasypasajes_2 !== 'undefined' ? json_PlantasdeAlamedasypasajes_2 :
+            (typeof json_PlantasdeAlamedasypasajes_1 !== 'undefined' ? json_PlantasdeAlamedasypasajes_1 :
+            (typeof json_EPIOFICIAL_0 !== 'undefined' ? json_EPIOFICIAL_0 : null));
+        var datosAlamedasSubmanzanas = typeof json_ALAMEDASDESUBMANZANAS_3 !== 'undefined' ? json_ALAMEDASDESUBMANZANAS_3 : null;
 
         preprocesarGeoJSON(datosLimite);
         preprocesarGeoJSON(datosLocales); 
@@ -183,3 +188,4 @@ function cerrarPortada() {
         preprocesarGeoJSON(datosSubsectores);
         preprocesarGeoJSON(datosSectores);
         preprocesarGeoJSON(datosTorresSanBorja);
+        preprocesarGeoJSON(datosAlamedasSubmanzanas);
