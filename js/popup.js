@@ -166,12 +166,6 @@
                 '';
         }
 
-        function obtenerLinkFranjas(props, fallbackProps) {
-            return props.FRANJAS || props.franjas ||
-                (fallbackProps ? (fallbackProps.FRANJAS || fallbackProps.franjas) : '') ||
-                '';
-        }
-
         function construirUrlDocumento(valorLink, codigo) {
             var cleaned = String(valorLink || '').trim();
             if (!cleaned || cleaned === '-') return null;
@@ -244,7 +238,6 @@
             var tramo = p.TRAMO || (pSec ? pSec.TRAMO : null) || "-";
             var anchoRaw = p.ANCHO || p.ANCHO2 || (pSec ? (pSec.ANCHO || pSec.ANCHO2) : null) || "-";
             var linkRaw = obtenerLinkDocumento(p, pSec);
-            var franjasRaw = obtenerLinkFranjas(p, pSec);
 
             var tipoMetro = obtenerTipoMetropolitano(p) || (pSec ? obtenerTipoMetropolitano(pSec) : "");
             var esMetropolitana = !!tipoMetro || (p.NIVEL && !String(p.NIVEL).toUpperCase().includes('LOCALES')) || (String(clasificacion).toUpperCase().includes('METROPOLITANA')) ? true : false;
@@ -281,17 +274,15 @@
                         var props = feat.getProperties();
                         var cod = String(getProp(props, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
                         var l = obtenerLinkDocumento(props, null);
-                        var fr = obtenerLinkFranjas(props, null);
                         var nombreTramo = props.TRAMO || "-";
                         
-                        if (((!l || l === "-") || (!fr || fr === "-")) && cod !== "-") {
+                        if ((!l || l === "-") && cod !== "-") {
                             var secFeatures = layerSecciones.getSource().getFeatures();
                             for (var i = 0; i < secFeatures.length; i++) {
                                 var fProps = secFeatures[i].getProperties();
                                 var fCod = String(getProp(fProps, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
                                 if (fCod === cod) {
                                     if (!l || l === "-") l = obtenerLinkDocumento(fProps, null);
-                                    if (!fr || fr === "-") fr = obtenerLinkFranjas(fProps, null);
                                     nombreTramo = fProps.TRAMO || nombreTramo;
                                     break;
                                 }
@@ -306,13 +297,6 @@
                             }
                         }
 
-                        if (fr && String(fr).trim() !== "" && fr !== "-") {
-                            var urlFranjas = construirUrlDocumento(fr, cod);
-                            if (urlFranjas && !linksUnicos.includes(urlFranjas)) {
-                                linksUnicos.push(urlFranjas);
-                                tramosConLinks.push({ url: urlFranjas, tramo: fixMojibake(nombreTramo), tipo: 'Franjas' });
-                            }
-                        }
                     });
                 } else if (!esMetropolitana && linkRaw && String(linkRaw).trim() !== "" && linkRaw !== "-") {
                     var urlFinal = construirUrlDocumento(linkRaw, codigoFinal);
@@ -321,13 +305,6 @@
                         tramosConLinks.push({ url: urlFinal, tramo: fixMojibake(tramo), tipo: 'Seccion vial' });
                     }
 
-                    if (franjasRaw && String(franjasRaw).trim() !== "" && franjasRaw !== "-") {
-                        var urlFranjas = construirUrlDocumento(franjasRaw, codigoFinal);
-                        if (urlFranjas && !linksUnicos.includes(urlFranjas)) {
-                            linksUnicos.push(urlFranjas);
-                            tramosConLinks.push({ url: urlFranjas, tramo: fixMojibake(tramo), tipo: 'Franjas' });
-                        }
-                    }
                 }
 
                 var mostrarMultiples = (!esMetropolitana && esBusquedaMultiple && linksUnicos.length > 1);
@@ -375,7 +352,7 @@
                             if (textoTramo.length > 28) textoTramo = textoTramo.substring(0, 28) + "...";
                             aBtn.textContent = item.tipo + " - " + textoTramo;
                         } else {
-                            aBtn.textContent = item.tipo === 'Franjas' ? "VER FRANJAS (PDF)" : "VER SECCION VIAL (PDF)";
+                            aBtn.textContent = "VER SECCION VIAL (PDF)";
                         }
                         linksContainer.appendChild(aBtn);
                     });
