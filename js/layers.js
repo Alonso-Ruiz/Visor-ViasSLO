@@ -168,7 +168,7 @@
 
         leerFeatures(datosAlamedasSubmanzanas).forEach(function(f) {
             f.set('_sourceLayer', 'alamedas_submanzanas');
-            f.set('_grupoEspecial', 'Juan XXIII');
+            f.set('_grupoEspecial', 'Papa Juan XXIII');
             f.set('Tipo', f.get('Tipo') || 'Alameda');
             f.set('NOMBRE', f.get('NOMBRE') || f.get('NOMBRE_1') || '-');
             featsJuanXXIIIAlameda.push(f);
