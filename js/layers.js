@@ -152,7 +152,10 @@
             if (typeof style_PlantasdeAlamedasypasajes_2 !== 'undefined') {
                 return style_PlantasdeAlamedasypasajes_2(feature, resolution);
             }
-            return style_PlantasdeAlamedasypasajes_1(feature, resolution);
+            return new ol.style.Style({
+                stroke: new ol.style.Stroke({ color: 'rgba(35,35,35,1)', width: 2.28 }),
+                fill: new ol.style.Fill({ color: 'rgba(208,28,66,0.45)' })
+            });
         }
 
         leerFeatures(datosTorresSanBorja).forEach(function(f) {
