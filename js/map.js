@@ -1,7 +1,7 @@
         var map = new ol.Map({
             target: 'map',
             renderer: ['webgl', 'canvas'],
-            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIIAlameda, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
+            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIIAlameda, layerJuanXXIIISubmanzana, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
             view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
             controls: [new ol.control.ScaleLine()]
         });
@@ -33,7 +33,7 @@
         map.on('singleclick', function(evt) {
             var clickedLayer = null;
             var feature = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
-                if (l === layerLimite || l === layerHighlight || l === layerSecciones) return null;
+                if (l === layerLimite || l === layerHighlight || l === layerSecciones || l === layerJuanXXIIISubmanzana) return null;
                 clickedLayer = l;
                 return f;
             }, { hitTolerance: 10 }); 
@@ -58,7 +58,7 @@
             if (evt.dragging) return;
 
             var hit = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
-                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones) ? true : false;
+                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones && l !== layerJuanXXIIISubmanzana) ? true : false;
             }, { hitTolerance: 10 });
 
             var viewport = map.getViewport();
@@ -230,7 +230,7 @@
         });
 
         var chkJuanXXIIIMaster = document.getElementById('chk-juan-xxiii');
-        var subsJuanXXIII = ['chk-juan-xxiii-alameda'];
+        var subsJuanXXIII = ['chk-juan-xxiii-alameda', 'chk-juan-xxiii-submanzana'];
 
         chkJuanXXIIIMaster.addEventListener('change', function(e) {
             var isChecked = e.target.checked;
@@ -274,6 +274,7 @@
             var chkTorresPasaje = document.getElementById('chk-torres-pasaje');
             var chkTorresServidumbre = document.getElementById('chk-torres-servidumbre');
             var chkJuanXXIIIAlameda = document.getElementById('chk-juan-xxiii-alameda');
+            var chkJuanXXIIISubmanzana = document.getElementById('chk-juan-xxiii-submanzana');
 
             layerLimite.setVisible(chkLimite && chkLimite.checked);
             layerSectores.setVisible(chkSectorPol && chkSectorPol.checked && z >= 13);
@@ -284,6 +285,7 @@
             layerTorresPasaje.setVisible(chkTorresPasaje && chkTorresPasaje.checked && z >= 13);
             layerTorresServidumbre.setVisible(chkTorresServidumbre && chkTorresServidumbre.checked && z >= 13);
             layerJuanXXIIIAlameda.setVisible(chkJuanXXIIIAlameda && chkJuanXXIIIAlameda.checked && z >= 13);
+            layerJuanXXIIISubmanzana.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
             layerMetroArterial.setVisible(chkMetroArt && chkMetroArt.checked && z >= 13);
             layerMetroColectora.setVisible(chkMetroCol && chkMetroCol.checked && z >= 13);
             layerMetroExpresa.setVisible(chkMetroExp && chkMetroExp.checked && z >= 13);

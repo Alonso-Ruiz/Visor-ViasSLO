@@ -579,6 +579,10 @@ body {
     border-left-color: #d01c42;
 }
 
+.layer-border-juan-xxiii-submanzana {
+    border-left-color: #232323;
+}
+
 .layer-header {
     display: flex;
     align-items: center;
