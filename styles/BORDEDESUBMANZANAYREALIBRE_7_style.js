@@ -10,7 +10,7 @@ var style_BORDEDESUBMANZANAYREALIBRE_7 = function(feature, resolution){
     var labelText = ""; 
     var value = feature.get("");
     var labelFont = "10px, sans-serif";
-    var labelFill = "#F2F2F2";
+    var labelFill = "#D9D9D9";
     var bufferColor = "";
     var bufferWidth = 0;
     var textAlign = "left";
@@ -21,7 +21,7 @@ var style_BORDEDESUBMANZANAYREALIBRE_7 = function(feature, resolution){
         labelText = String("");
     }
     var style = [ new ol.style.Style({
-        stroke: new ol.style.Stroke({color: 'rgba(242, 242, 242)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 0.988}),
+        stroke: new ol.style.Stroke({color: 'rgba(217, 217, 217)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 0.999}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
                               bufferWidth)
