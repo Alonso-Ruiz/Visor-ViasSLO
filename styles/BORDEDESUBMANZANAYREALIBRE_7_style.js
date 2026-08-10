@@ -21,7 +21,7 @@ var style_BORDEDESUBMANZANAYREALIBRE_7 = function(feature, resolution){
         labelText = String("");
     }
     var style = [ new ol.style.Style({
-        stroke: new ol.style.Stroke({color: 'rgba(217, 217, 217)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 0.999}),
+        stroke: new ol.style.Stroke({color: 'rgba(217, 217, 217)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 2}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
                               bufferWidth)
