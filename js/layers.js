@@ -208,13 +208,13 @@
         var layerJuanXXIIISubmanzana = new ol.layer.Vector({
             source: new ol.source.Vector({ features: featsJuanXXIIISubmanzana }),
             style: typeof style_BORDEDESUBMANZANAYREALIBRE_7 !== 'undefined' ? style_BORDEDESUBMANZANAYREALIBRE_7 : styleHighlightFn,
-            zIndex: 4,
+            zIndex: 4.3,
             declutter: true
         });
         var layerJuanXXIIISubmanzanaPoligono = new ol.layer.Vector({
             source: new ol.source.Vector({ features: featsJuanXXIIISubmanzanaPoligono }),
             style: typeof style_SUBMANZANAS_1 !== 'undefined' ? style_SUBMANZANAS_1 : styleHighlightFn,
-            zIndex: 4,
+            zIndex: 4.2,
             declutter: true
         });
         var layerJuanXXIIIAreasLibresSubmanzana = new ol.layer.Vector({

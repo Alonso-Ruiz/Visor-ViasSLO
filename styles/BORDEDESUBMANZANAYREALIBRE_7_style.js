@@ -10,12 +10,12 @@ function getFillPattern_BORDEDESUBMANZANAYREALIBRE_7() {
     var ctx = canvas.getContext('2d');
 
     ctx.strokeStyle = 'rgba(245,245,245,0.95)';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 1;
     ctx.lineCap = 'square';
     ctx.beginPath();
     for (var i = -36; i <= 72; i += 18) {
-        ctx.moveTo(i, 36);
-        ctx.lineTo(i + 36, 0);
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + 36, 36);
     }
     ctx.stroke();
 
@@ -43,7 +43,7 @@ var style_BORDEDESUBMANZANAYREALIBRE_7 = function(feature, resolution){
         labelText = String("");
     }
     var style = [ new ol.style.Style({
-        stroke: new ol.style.Stroke({color: 'rgba(217, 217, 217)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 2}),fill: new ol.style.Fill({color: getFillPattern_BORDEDESUBMANZANAYREALIBRE_7()}),
+        stroke: new ol.style.Stroke({color: 'rgba(235,235,235,0.95)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 2}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
                               bufferWidth)

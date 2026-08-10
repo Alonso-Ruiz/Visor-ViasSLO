@@ -10,7 +10,7 @@ function getFillPattern_SUBMANZANAS_1() {
     var ctx = canvas.getContext('2d');
 
     ctx.strokeStyle = 'rgba(245,245,245,0.95)';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 1;
     ctx.lineCap = 'square';
     ctx.beginPath();
     for (var i = -36; i <= 72; i += 18) {
