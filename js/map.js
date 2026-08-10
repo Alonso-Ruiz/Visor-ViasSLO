@@ -1,7 +1,7 @@
         var map = new ol.Map({
             target: 'map',
             renderer: ['webgl', 'canvas'],
-            layers: [googleSat, layerSectores, layerSubsectores, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIIAlameda, layerJuanXXIIISubmanzana, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
+            layers: [googleSat, layerSectores, layerSubsectores, layerJuanXXIIISubmanzanaPoligono, layerJuanXXIIIAreasLibresSubmanzana, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIISubmanzana, layerJuanXXIIIAlameda, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
             view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
             controls: [new ol.control.ScaleLine()]
         });
@@ -33,7 +33,7 @@
         map.on('singleclick', function(evt) {
             var clickedLayer = null;
             var feature = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
-                if (l === layerLimite || l === layerHighlight || l === layerSecciones || l === layerJuanXXIIISubmanzana) return null;
+                if (l === layerLimite || l === layerHighlight || l === layerSecciones || l === layerJuanXXIIISubmanzana || l === layerJuanXXIIISubmanzanaPoligono || l === layerJuanXXIIIAreasLibresSubmanzana) return null;
                 clickedLayer = l;
                 return f;
             }, { hitTolerance: 10 }); 
@@ -58,7 +58,7 @@
             if (evt.dragging) return;
 
             var hit = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
-                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones && l !== layerJuanXXIIISubmanzana) ? true : false;
+                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones && l !== layerJuanXXIIISubmanzana && l !== layerJuanXXIIISubmanzanaPoligono && l !== layerJuanXXIIIAreasLibresSubmanzana) ? true : false;
             }, { hitTolerance: 10 });
 
             var viewport = map.getViewport();
@@ -286,6 +286,8 @@
             layerTorresServidumbre.setVisible(chkTorresServidumbre && chkTorresServidumbre.checked && z >= 13);
             layerJuanXXIIIAlameda.setVisible(chkJuanXXIIIAlameda && chkJuanXXIIIAlameda.checked && z >= 13);
             layerJuanXXIIISubmanzana.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
+            layerJuanXXIIISubmanzanaPoligono.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
+            layerJuanXXIIIAreasLibresSubmanzana.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
             layerMetroArterial.setVisible(chkMetroArt && chkMetroArt.checked && z >= 13);
             layerMetroColectora.setVisible(chkMetroCol && chkMetroCol.checked && z >= 13);
             layerMetroExpresa.setVisible(chkMetroExp && chkMetroExp.checked && z >= 13);

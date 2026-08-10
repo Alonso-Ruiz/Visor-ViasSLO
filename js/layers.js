@@ -145,6 +145,8 @@
         var featsTorresServidumbre = [];
         var featsJuanXXIIIAlameda = [];
         var featsJuanXXIIISubmanzana = [];
+        var featsJuanXXIIISubmanzanaPoligono = [];
+        var featsJuanXXIIIAreasLibresSubmanzana = [];
 
         function styleTorresSanBorjaFn(feature, resolution) {
             if (feature.get('_sourceLayer') === 'alamedas_submanzanas' && typeof style_ALAMEDASDESUBMANZANAS_3 !== 'undefined') {
@@ -185,6 +187,20 @@
             });
         }
 
+        if (typeof json_SUBMANZANAS_1 !== 'undefined') {
+            leerFeatures(json_SUBMANZANAS_1).forEach(function(f) {
+                f.set('_sourceLayer', 'juan_xxiii_submanzana_poligono');
+                featsJuanXXIIISubmanzanaPoligono.push(f);
+            });
+        }
+
+        if (typeof json_AREASLIBRESDESUBMANZANAS_0 !== 'undefined') {
+            leerFeatures(json_AREASLIBRESDESUBMANZANAS_0).forEach(function(f) {
+                f.set('_sourceLayer', 'juan_xxiii_areas_libres_submanzana');
+                featsJuanXXIIIAreasLibresSubmanzana.push(f);
+            });
+        }
+
         var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
@@ -192,6 +208,18 @@
         var layerJuanXXIIISubmanzana = new ol.layer.Vector({
             source: new ol.source.Vector({ features: featsJuanXXIIISubmanzana }),
             style: typeof style_BORDEDESUBMANZANAYREALIBRE_7 !== 'undefined' ? style_BORDEDESUBMANZANAYREALIBRE_7 : styleHighlightFn,
+            zIndex: 4,
+            declutter: true
+        });
+        var layerJuanXXIIISubmanzanaPoligono = new ol.layer.Vector({
+            source: new ol.source.Vector({ features: featsJuanXXIIISubmanzanaPoligono }),
+            style: typeof style_SUBMANZANAS_1 !== 'undefined' ? style_SUBMANZANAS_1 : styleHighlightFn,
+            zIndex: 4,
+            declutter: true
+        });
+        var layerJuanXXIIIAreasLibresSubmanzana = new ol.layer.Vector({
+            source: new ol.source.Vector({ features: featsJuanXXIIIAreasLibresSubmanzana }),
+            style: typeof style_AREASLIBRESDESUBMANZANAS_0 !== 'undefined' ? style_AREASLIBRESDESUBMANZANAS_0 : styleHighlightFn,
             zIndex: 4,
             declutter: true
         });

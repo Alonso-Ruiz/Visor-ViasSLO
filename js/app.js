@@ -19,6 +19,14 @@ function inicializarEventosInterfaz() {
     });
 }
 
-inicializarEventosInterfaz();
-inicializarInfoTitulo();
-actualizarVisibilidadCapas();
+function iniciarAplicacion() {
+    inicializarEventosInterfaz();
+    inicializarInfoTitulo();
+    actualizarVisibilidadCapas();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciarAplicacion);
+} else {
+    iniciarAplicacion();
+}

@@ -86,7 +86,7 @@ body {
     backdrop-filter: blur(4px);
     transform: translateY(0);
     opacity: 1;
-    max-height: 160px;
+    max-height: 520px;
     overflow: hidden;
     transition: opacity 0.7s ease, transform 0.7s ease, max-height 0.7s ease, margin 0.7s ease, padding 0.7s ease;
 }
@@ -124,6 +124,67 @@ body {
     color: #00975D;
     font-size: 13px;
     font-weight: 700;
+}
+
+.anexos-detalle {
+    margin-top: 12px;
+}
+
+.btn-ver-anexos {
+    display: block;
+    box-sizing: border-box;
+    margin-top: 0;
+    padding: 7px 10px;
+    width: 100%;
+    border: 1px solid rgba(0, 151, 93, 0.28);
+    border-radius: 4px;
+    background: rgba(0, 151, 93, 0.08);
+    color: #007a4c;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0;
+    text-align: center;
+    list-style: none;
+}
+
+.btn-ver-anexos::-webkit-details-marker {
+    display: none;
+}
+
+.btn-ver-anexos:hover,
+.anexos-detalle[open] > .btn-ver-anexos {
+    background: #00975D;
+    color: #ffffff;
+}
+
+.anexos-container {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-top: 0;
+    transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.25s ease;
+}
+
+.anexos-detalle[open] .anexos-container {
+    max-height: 330px;
+    overflow-y: auto;
+    opacity: 1;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.anexos-lista {
+    margin: 0;
+    padding-left: 17px;
+    color: #3f3f3f;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.anexos-lista li {
+    margin-bottom: 6px;
 }
 
 #search-container {
@@ -924,6 +985,28 @@ body {
 
     #title-container h3 {
         font-size: 11.5px;
+    }
+
+    #title-container {
+        max-height: 430px;
+    }
+
+    .btn-ver-anexos {
+        padding: 7px 8px;
+        font-size: 11px;
+    }
+
+    .anexos-detalle {
+        margin-top: 9px;
+    }
+
+    .anexos-detalle[open] .anexos-container {
+        max-height: 230px;
+    }
+
+    .anexos-lista {
+        font-size: 10.5px;
+        line-height: 1.3;
     }
 
     #panel-usos {
