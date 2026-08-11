@@ -187,6 +187,30 @@ body {
     margin-bottom: 6px;
 }
 
+.anexos-lista a {
+    color: #007a4c;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.anexos-lista a:hover,
+.anexos-lista a:focus {
+    color: #005f3b;
+    text-decoration: underline;
+}
+
+.anexo-pendiente {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #eeeeee;
+    color: #666666;
+    font-size: 9.5px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
 #search-container {
     pointer-events: auto;
     position: relative;
@@ -642,6 +666,31 @@ body {
 
 .layer-border-juan-xxiii-submanzana {
     border-left-color: #232323;
+}
+
+.layer-border-limatambo {
+    border-left-color: #45b2d2;
+}
+
+.layer-border-limatambo-alameda {
+    border-left-color: #d01c42;
+}
+
+.layer-border-limatambo-calle {
+    border-left-color: #45b2d2;
+}
+
+.layer-border-limatambo-jiron {
+    border-left-color: #dca22d;
+}
+
+.layer-border-limatambo-pasaje {
+    border-left-color: #2800ac;
+}
+
+.layer-border-limatambo-servidumbre {
+    border-left-color: #232323;
+    border-left-style: dashed;
 }
 
 .layer-header {

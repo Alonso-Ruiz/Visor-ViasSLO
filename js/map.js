@@ -1,7 +1,7 @@
         var map = new ol.Map({
             target: 'map',
             renderer: ['webgl', 'canvas'],
-            layers: [googleSat, layerSectores, layerSubsectores, layerJuanXXIIISubmanzanaPoligono, layerJuanXXIIIAreasLibresSubmanzana, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIISubmanzana, layerJuanXXIIIAlameda, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
+            layers: [googleSat, layerSectores, layerSubsectores, layerJuanXXIIISubmanzanaPoligono, layerJuanXXIIIAreasLibresSubmanzana, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerLimatamboAlameda, layerLimatamboCalle, layerLimatamboJiron, layerLimatamboPasaje, layerLimatamboServidumbre, layerJuanXXIIISubmanzana, layerJuanXXIIIAlameda, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
             view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
             controls: [new ol.control.ScaleLine()]
         });
@@ -42,7 +42,7 @@
                 mostrarPopupSector(feature, evt.coordinate, 'sector');
             } else if (feature && (clickedLayer === layerSubsectores || clickedLayer === layerSubsectoresLabels)) {
                 mostrarPopupSector(feature, evt.coordinate, 'subsector');
-            } else if (feature && [layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIIAlameda].includes(clickedLayer)) {
+            } else if (feature && [layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerJuanXXIIIAlameda, layerLimatamboAlameda, layerLimatamboCalle, layerLimatamboJiron, layerLimatamboPasaje, layerLimatamboServidumbre].includes(clickedLayer)) {
                 mostrarPopupTorres(feature, evt.coordinate);
             } else if (feature) {
                 mostrarPopupFeature(feature, evt.coordinate);
@@ -255,6 +255,32 @@
             });
         });
 
+        var chkLimatamboMaster = document.getElementById('chk-limatambo');
+        var subsLimatambo = ['chk-limatambo-alameda', 'chk-limatambo-calle', 'chk-limatambo-jiron', 'chk-limatambo-pasaje', 'chk-limatambo-servidumbre'];
+
+        chkLimatamboMaster.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            subsLimatambo.forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.checked = isChecked;
+            });
+            actualizarVisibilidadCapas();
+        });
+
+        function updateMasterLimatamboState() {
+            var allChecked = subsLimatambo.every(id => document.getElementById(id).checked);
+            var anyChecked = subsLimatambo.some(id => document.getElementById(id).checked);
+            chkLimatamboMaster.checked = allChecked;
+            chkLimatamboMaster.indeterminate = !allChecked && anyChecked;
+        }
+
+        subsLimatambo.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                updateMasterLimatamboState();
+                actualizarVisibilidadCapas();
+            });
+        });
+
         function actualizarVisibilidadCapas() {
             var z = map.getView().getZoom();
             
@@ -275,6 +301,11 @@
             var chkTorresServidumbre = document.getElementById('chk-torres-servidumbre');
             var chkJuanXXIIIAlameda = document.getElementById('chk-juan-xxiii-alameda');
             var chkJuanXXIIISubmanzana = document.getElementById('chk-juan-xxiii-submanzana');
+            var chkLimatamboAlameda = document.getElementById('chk-limatambo-alameda');
+            var chkLimatamboCalle = document.getElementById('chk-limatambo-calle');
+            var chkLimatamboJiron = document.getElementById('chk-limatambo-jiron');
+            var chkLimatamboPasaje = document.getElementById('chk-limatambo-pasaje');
+            var chkLimatamboServidumbre = document.getElementById('chk-limatambo-servidumbre');
 
             layerLimite.setVisible(chkLimite && chkLimite.checked);
             layerSectores.setVisible(chkSectorPol && chkSectorPol.checked && z >= 13);
@@ -288,6 +319,11 @@
             layerJuanXXIIISubmanzana.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
             layerJuanXXIIISubmanzanaPoligono.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
             layerJuanXXIIIAreasLibresSubmanzana.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
+            layerLimatamboAlameda.setVisible(chkLimatamboAlameda && chkLimatamboAlameda.checked && z >= 13);
+            layerLimatamboCalle.setVisible(chkLimatamboCalle && chkLimatamboCalle.checked && z >= 13);
+            layerLimatamboJiron.setVisible(chkLimatamboJiron && chkLimatamboJiron.checked && z >= 13);
+            layerLimatamboPasaje.setVisible(chkLimatamboPasaje && chkLimatamboPasaje.checked && z >= 13);
+            layerLimatamboServidumbre.setVisible(chkLimatamboServidumbre && chkLimatamboServidumbre.checked && z >= 13);
             layerMetroArterial.setVisible(chkMetroArt && chkMetroArt.checked && z >= 13);
             layerMetroColectora.setVisible(chkMetroCol && chkMetroCol.checked && z >= 13);
             layerMetroExpresa.setVisible(chkMetroExp && chkMetroExp.checked && z >= 13);

@@ -58,7 +58,7 @@
             sourceHighlight.addFeature(feature);
 
             var p = feature.getProperties();
-            var tipoRaw = p.Tipo || getProp(p, 'CATEGORIA', 'CATEGORÍA') || '-';
+            var tipoRaw = p.Tipo || getPropFlexible(p, 'Categoría', 'Categoria', 'CATEGORIA', 'CATEGORÍA') || '-';
             var tipo = tipoRaw === 'Paso de servidumbre' ? 'Servidumbre de paso' : tipoRaw;
 
             content.textContent = '';
@@ -71,10 +71,12 @@
             var tabla = document.createElement('table');
             tabla.className = 'popup-tabla';
             crearFilaSegura(tabla, 'Tipo', fixMojibake(tipo));
-            crearFilaSegura(tabla, 'Nombre', fixMojibake(p.NOMBRE || p.NOMBRE_1 || '-'));
-            var codigo = getProp(p, 'CODIGO', 'C\u00d3DIGO', 'CÃ“DIGO') || '-';
+            crearFilaSegura(tabla, 'Nombre', fixMojibake(p.NOMBRE || p.NOMBRE_1 || p.Nombre || '-'));
+            var codigo = getPropFlexible(p, 'CODIGO', 'Código', 'C\u00d3DIGO', 'CÃ“DIGO') || '-';
             crearFilaSegura(tabla, 'Codigo', codigo);
-            crearFilaSegura(tabla, 'Clasificacion', p.CLASIFICAC || '-');
+            crearFilaSegura(tabla, 'Clasificacion', p.CLASIFICAC || p.Clasificac || '-');
+            crearFilaSegura(tabla, 'Subclasificacion', p.Subclasifi || p.SUBCLASIFI || '-');
+            crearFilaSegura(tabla, 'Supermanzana', p.Supermanza || '-');
             crearFilaSegura(tabla, 'Area', p.AREA ? Number(p.AREA).toLocaleString('es-PE') + ' m2' : '-');
 
             content.appendChild(tabla);
@@ -159,10 +161,11 @@
         }
 
         function obtenerLinkDocumento(props, fallbackProps) {
-            return props.LINKVERCEL || props.linkvercel ||
-                (fallbackProps ? (fallbackProps.LINKVERCEL || fallbackProps.linkvercel) : '') ||
+            return props.LINKVERCEL || props.linkvercel || props.Linkvercel ||
+                (fallbackProps ? (fallbackProps.LINKVERCEL || fallbackProps.linkvercel || fallbackProps.Linkvercel) : '') ||
                 props.LINK || props.link || getProp(props, 'SECCI\u00d3N_') ||
-                (fallbackProps ? (fallbackProps.LINK || fallbackProps.link || getProp(fallbackProps, 'SECCI\u00d3N_')) : null) ||
+                props.Link ||
+                (fallbackProps ? (fallbackProps.LINK || fallbackProps.link || fallbackProps.Link || getProp(fallbackProps, 'SECCI\u00d3N_')) : null) ||
                 '';
         }
 

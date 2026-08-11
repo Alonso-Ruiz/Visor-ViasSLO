@@ -17,7 +17,7 @@
 
                 var clasRaw = String(p.CLASIFIC || p.CLASIFICA || p.clasifica || "").toLowerCase();
                 var subcRaw = String(getProp(p, 'SUBCLASIFI', 'SUBCLASIFICACI\u00d3N') || "").toLowerCase();
-                var catRaw = String(getProp(p, 'CATEGORIA', 'CATEGOR\u00cdA') || "").toLowerCase();
+                var catRaw = String(getPropFlexible(p, 'Categoría', 'Categoria', 'CATEGORIA', 'CATEGOR\u00cdA') || "").toLowerCase();
                 var tipoMetro = tipoMetroForzado || obtenerTipoMetropolitano(p);
                 var esMetroReal = flagMetro || !!tipoMetro;
                 
@@ -67,6 +67,11 @@
         indexarOLFeatures(layerSecPasaje.getSource().getFeatures(), false);
         indexarOLFeatures(layerSecAlameda.getSource().getFeatures(), false);
         indexarOLFeatures(layerJuanXXIIIAlameda.getSource().getFeatures(), false);
+        indexarOLFeatures(layerLimatamboAlameda.getSource().getFeatures(), false);
+        indexarOLFeatures(layerLimatamboCalle.getSource().getFeatures(), false);
+        indexarOLFeatures(layerLimatamboJiron.getSource().getFeatures(), false);
+        indexarOLFeatures(layerLimatamboPasaje.getSource().getFeatures(), false);
+        indexarOLFeatures(layerLimatamboServidumbre.getSource().getFeatures(), false);
         
         dictVias = Object.values(mapClasif);
         dictVias.sort((a,b) => a.nombre.localeCompare(b.nombre));

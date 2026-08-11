@@ -87,6 +87,23 @@ function cerrarPortada() {
             return undefined;
         }
 
+        function getPropFlexible(obj) {
+            if (!obj) return undefined;
+            var expected = [];
+            for (var i = 1; i < arguments.length; i++) {
+                expected.push(normalizarTextoPlano(arguments[i]));
+            }
+            var exact = getProp.apply(null, arguments);
+            if (exact != null) return exact;
+            var keys = Object.keys(obj);
+            for (var k = 0; k < keys.length; k++) {
+                if (expected.includes(normalizarTextoPlano(keys[k])) && obj[keys[k]] != null) {
+                    return obj[keys[k]];
+                }
+            }
+            return undefined;
+        }
+
         function normalizarTextoPlano(texto) {
             return quitarTildes(fixMojibake(texto || '').replace(/&lt;|&gt;/g, ''));
         }
@@ -181,6 +198,7 @@ function cerrarPortada() {
             (typeof json_PlantasdeAlamedasypasajes_1 !== 'undefined' ? json_PlantasdeAlamedasypasajes_1 :
             (typeof json_EPIOFICIAL_0 !== 'undefined' ? json_EPIOFICIAL_0 : null));
         var datosAlamedasSubmanzanas = typeof json_ALAMEDASDESUBMANZANAS_3 !== 'undefined' ? json_ALAMEDASDESUBMANZANAS_3 : null;
+        var datosPlantasLimatambo = typeof json_PlantasdevasenLimatambo_0 !== 'undefined' ? json_PlantasdevasenLimatambo_0 : null;
 
         preprocesarGeoJSON(datosLimite);
         preprocesarGeoJSON(datosLocales); 
@@ -189,3 +207,4 @@ function cerrarPortada() {
         preprocesarGeoJSON(datosSectores);
         preprocesarGeoJSON(datosTorresSanBorja);
         preprocesarGeoJSON(datosAlamedasSubmanzanas);
+        preprocesarGeoJSON(datosPlantasLimatambo);

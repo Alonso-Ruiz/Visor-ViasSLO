@@ -147,6 +147,11 @@
         var featsJuanXXIIISubmanzana = [];
         var featsJuanXXIIISubmanzanaPoligono = [];
         var featsJuanXXIIIAreasLibresSubmanzana = [];
+        var featsLimatamboAlameda = [];
+        var featsLimatamboCalle = [];
+        var featsLimatamboJiron = [];
+        var featsLimatamboPasaje = [];
+        var featsLimatamboServidumbre = [];
 
         function styleTorresSanBorjaFn(feature, resolution) {
             if (feature.get('_sourceLayer') === 'alamedas_submanzanas' && typeof style_ALAMEDASDESUBMANZANAS_3 !== 'undefined') {
@@ -158,6 +163,16 @@
             return new ol.style.Style({
                 stroke: new ol.style.Stroke({ color: 'rgba(35,35,35,1)', width: 2.28 }),
                 fill: new ol.style.Fill({ color: 'rgba(208,28,66,0.45)' })
+            });
+        }
+
+        function styleLimatamboFn(feature, resolution) {
+            if (typeof style_PlantasdevasenLimatambo_0 !== 'undefined') {
+                return style_PlantasdevasenLimatambo_0(feature, resolution);
+            }
+            return new ol.style.Style({
+                stroke: new ol.style.Stroke({ color: 'rgba(35,35,35,1)', width: 1 }),
+                fill: new ol.style.Fill({ color: 'rgba(69,178,210,0.55)' })
             });
         }
 
@@ -201,6 +216,29 @@
             });
         }
 
+        if (datosPlantasLimatambo) {
+            leerFeatures(datosPlantasLimatambo).forEach(function(f) {
+                var categoria = getPropFlexible(f.getProperties(), 'Categoría', 'Categoria', 'CATEGORÍA', 'CATEGORIA') || '';
+                var tipo = normalizarTextoPlano(categoria);
+                f.set('_grupoEspecial', 'Torres de Limatambo');
+                f.set('Tipo', categoria || '-');
+                f.set('NOMBRE', f.get('Nombre') || f.get('NOMBRE') || '-');
+                f.set('CODIGO', getPropFlexible(f.getProperties(), 'Código', 'CODIGO', 'CÓDIGO') || '-');
+                f.set('CLASIFICAC', f.get('Clasificac') || f.get('CLASIFICAC') || '-');
+                if (tipo === 'alameda') {
+                    featsLimatamboAlameda.push(f);
+                } else if (tipo === 'calle') {
+                    featsLimatamboCalle.push(f);
+                } else if (tipo === 'jiron') {
+                    featsLimatamboJiron.push(f);
+                } else if (tipo === 'pasaje') {
+                    featsLimatamboPasaje.push(f);
+                } else if (tipo.includes('servidumbre')) {
+                    featsLimatamboServidumbre.push(f);
+                }
+            });
+        }
+
         var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
@@ -223,6 +261,11 @@
             zIndex: 4,
             declutter: true
         });
+        var layerLimatamboAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboAlameda }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
+        var layerLimatamboCalle = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboCalle }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
+        var layerLimatamboJiron = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboJiron }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
+        var layerLimatamboPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboPasaje }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
+        var layerLimatamboServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboServidumbre }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
 
         var sourceHighlight = new ol.source.Vector();
         var layerHighlight = new ol.layer.Vector({ source: sourceHighlight, style: styleHighlightFn, zIndex: 12 });
