@@ -9,7 +9,7 @@
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mt1.google.com; connect-src 'self' https://mt1.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
         
         <link rel="stylesheet" href="vendor/openlayers/ol.css">
-        <link rel="stylesheet" href="css/main.css?v=20260811-limatambo">
+        <link rel="stylesheet" href="css/main.css?v=20260811-limatambo-submanzanas">
         <link rel="icon" type="image/png" href="Escudo_de_San_Borja.png">
         <link rel="apple-touch-icon" href="Escudo_de_San_Borja.png">
         <title>Sistema Vial - San Borja</title>
@@ -205,6 +205,52 @@
                     </div>
                 </div>
 
+                <div class="layer-toggle layer-border-limatambo">
+                    <div class="layer-header">
+                        <input type="checkbox" id="chk-limatambo" checked>
+                        <span class="layer-title" data-toggle-def="def-limatambo">Torres de Limatambo &#9662;</span>
+                    </div>
+                    <div class="layer-def" id="def-limatambo">Plantas de v&iacute;as de trazado no lineal en Torres de Limatambo.</div>
+                    <div class="sub-layer-container">
+                        <div class="sub-layer layer-border-limatambo-alameda">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-limatambo-alameda" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-alameda">Alameda</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-limatambo-calle">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-limatambo-calle" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-calle">Calle</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-limatambo-jiron">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-limatambo-jiron" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-jiron">Jir&oacute;n</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-limatambo-pasaje">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-limatambo-pasaje" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-pasaje">Pasaje</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-limatambo-servidumbre">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-limatambo-servidumbre" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-servidumbre">Servidumbre de paso</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-limatambo-submanzana">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-limatambo-submanzana" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-submanzana">Submanzanas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="layer-toggle layer-border-torres">
                     <div class="layer-header">
                         <input type="checkbox" id="chk-torres" checked>
@@ -249,47 +295,7 @@
                         <div class="sub-layer layer-border-juan-xxiii-submanzana">
                             <div class="layer-header">
                                 <input type="checkbox" id="chk-juan-xxiii-submanzana" checked>
-                                <span class="layer-title" data-toggle-checkbox="chk-juan-xxiii-submanzana">Submanzana</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="layer-toggle layer-border-limatambo">
-                    <div class="layer-header">
-                        <input type="checkbox" id="chk-limatambo" checked>
-                        <span class="layer-title" data-toggle-def="def-limatambo">Torres de Limatambo &#9662;</span>
-                    </div>
-                    <div class="layer-def" id="def-limatambo">Plantas de v&iacute;as de trazado no lineal en Torres de Limatambo.</div>
-                    <div class="sub-layer-container">
-                        <div class="sub-layer layer-border-limatambo-alameda">
-                            <div class="layer-header">
-                                <input type="checkbox" id="chk-limatambo-alameda" checked>
-                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-alameda">Alameda</span>
-                            </div>
-                        </div>
-                        <div class="sub-layer layer-border-limatambo-calle">
-                            <div class="layer-header">
-                                <input type="checkbox" id="chk-limatambo-calle" checked>
-                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-calle">Calle</span>
-                            </div>
-                        </div>
-                        <div class="sub-layer layer-border-limatambo-jiron">
-                            <div class="layer-header">
-                                <input type="checkbox" id="chk-limatambo-jiron" checked>
-                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-jiron">Jir&oacute;n</span>
-                            </div>
-                        </div>
-                        <div class="sub-layer layer-border-limatambo-pasaje">
-                            <div class="layer-header">
-                                <input type="checkbox" id="chk-limatambo-pasaje" checked>
-                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-pasaje">Pasaje</span>
-                            </div>
-                        </div>
-                        <div class="sub-layer layer-border-limatambo-servidumbre">
-                            <div class="layer-header">
-                                <input type="checkbox" id="chk-limatambo-servidumbre" checked>
-                                <span class="layer-title" data-toggle-checkbox="chk-limatambo-servidumbre">Servidumbre de paso</span>
+                                <span class="layer-title" data-toggle-checkbox="chk-juan-xxiii-submanzana">Submanzanas</span>
                             </div>
                         </div>
                     </div>
@@ -321,9 +327,12 @@
         <script src="layers/BORDEDESUBMANZANAYREALIBRE_7.js"></script>
         <script src="layers/SUBMANZANAS_1.js"></script>
         <script src="layers/AREASLIBRESDESUBMANZANAS_0.js"></script>
-        <script src="layers/PlantasdevasenLimatambo_0.js?v=20260811-limatambo"></script>
+        <script src="layers/PlantasdevasenLimatambo_0.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="layers/Manzanas_Limatambo_1.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="layers/Lotes_Limatambo_2.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="layers/reastechadas_3.js?v=20260811-limatambo-submanzanas"></script>
         <script src="js/pdf-manifest.js"></script>
-        <script src="js/utils.js?v=20260811-limatambo"></script>
+        <script src="js/utils.js?v=20260811-limatambo-submanzanas"></script>
         <script src="styles/subsectores_1_style.js"></script>
         <script src="styles/Sectores_2_style.js"></script>
         <script src="styles/PlantasdeAlamedasypasajes_2_style.js"></script>
@@ -331,11 +340,14 @@
         <script src="styles/BORDEDESUBMANZANAYREALIBRE_7_style.js"></script>
         <script src="styles/SUBMANZANAS_1_style.js"></script>
         <script src="styles/AREASLIBRESDESUBMANZANAS_0_style.js"></script>
-        <script src="styles/PlantasdevasenLimatambo_0_style.js?v=20260811-limatambo"></script>
-        <script src="js/layers.js?v=20260811-limatambo"></script>
-        <script src="js/map.js?v=20260811-limatambo"></script>
+        <script src="styles/PlantasdevasenLimatambo_0_style.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="styles/Manzanas_Limatambo_1_style.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="styles/Lotes_Limatambo_2_style.js?v=20260811-lotes-rayado"></script>
+        <script src="styles/reastechadas_3_style.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="js/layers.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="js/map.js?v=20260811-limatambo-submanzanas"></script>
         <script src="js/popup.js?v=20260811-limatambo"></script>
-        <script src="js/search.js?v=20260811-limatambo"></script>
+        <script src="js/search.js?v=20260811-limatambo-submanzanas"></script>
         <script src="js/app.js?v=20260810-anexos"></script>
     </body>
 </html>

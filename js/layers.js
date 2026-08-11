@@ -152,6 +152,9 @@
         var featsLimatamboJiron = [];
         var featsLimatamboPasaje = [];
         var featsLimatamboServidumbre = [];
+        var featsLimatamboSubmanzana = [];
+        var featsLimatamboLotes = [];
+        var featsLimatamboAreasTechadas = [];
 
         function styleTorresSanBorjaFn(feature, resolution) {
             if (feature.get('_sourceLayer') === 'alamedas_submanzanas' && typeof style_ALAMEDASDESUBMANZANAS_3 !== 'undefined') {
@@ -239,6 +242,30 @@
             });
         }
 
+        if (datosManzanasLimatambo) {
+            leerFeatures(datosManzanasLimatambo).forEach(function(f) {
+                f.set('_grupoEspecial', 'Torres de Limatambo');
+                f.set('Tipo', 'Submanzana');
+                f.set('NOMBRE', 'Submanzana ' + (f.get('Manzana') || '-'));
+                f.set('CODIGO', f.get('Manzana') || '-');
+                featsLimatamboSubmanzana.push(f);
+            });
+        }
+
+        if (datosLotesLimatambo) {
+            leerFeatures(datosLotesLimatambo).forEach(function(f) {
+                f.set('_sourceLayer', 'limatambo_lotes');
+                featsLimatamboLotes.push(f);
+            });
+        }
+
+        if (datosAreasTechadasLimatambo) {
+            leerFeatures(datosAreasTechadasLimatambo).forEach(function(f) {
+                f.set('_sourceLayer', 'limatambo_areas_techadas');
+                featsLimatamboAreasTechadas.push(f);
+            });
+        }
+
         var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
@@ -266,6 +293,9 @@
         var layerLimatamboJiron = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboJiron }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
         var layerLimatamboPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboPasaje }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
         var layerLimatamboServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboServidumbre }), style: styleLimatamboFn, zIndex: 4.7, declutter: true });
+        var layerLimatamboAreasTechadas = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboAreasTechadas }), style: typeof style_reastechadas_3 !== 'undefined' ? style_reastechadas_3 : styleHighlightFn, zIndex: 4.35, declutter: true });
+        var layerLimatamboLotes = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboLotes }), style: typeof style_Lotes_Limatambo_2 !== 'undefined' ? style_Lotes_Limatambo_2 : styleHighlightFn, zIndex: 4.4, declutter: true });
+        var layerLimatamboSubmanzana = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsLimatamboSubmanzana }), style: typeof style_Manzanas_Limatambo_1 !== 'undefined' ? style_Manzanas_Limatambo_1 : styleHighlightFn, zIndex: 4.45, declutter: true });
 
         var sourceHighlight = new ol.source.Vector();
         var layerHighlight = new ol.layer.Vector({ source: sourceHighlight, style: styleHighlightFn, zIndex: 12 });

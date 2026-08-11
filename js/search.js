@@ -72,6 +72,7 @@
         indexarOLFeatures(layerLimatamboJiron.getSource().getFeatures(), false);
         indexarOLFeatures(layerLimatamboPasaje.getSource().getFeatures(), false);
         indexarOLFeatures(layerLimatamboServidumbre.getSource().getFeatures(), false);
+        indexarOLFeatures(layerLimatamboSubmanzana.getSource().getFeatures(), false);
         
         dictVias = Object.values(mapClasif);
         dictVias.sort((a,b) => a.nombre.localeCompare(b.nombre));

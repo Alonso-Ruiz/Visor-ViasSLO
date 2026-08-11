@@ -693,6 +693,11 @@ body {
     border-left-style: dashed;
 }
 
+.layer-border-limatambo-submanzana {
+    border-left-color: #ffffff;
+    box-shadow: inset 3px 0 0 rgba(35, 35, 35, 0.4);
+}
+
 .layer-header {
     display: flex;
     align-items: center;
