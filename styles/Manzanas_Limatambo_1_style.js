@@ -10,7 +10,7 @@ var style_Manzanas_Limatambo_1 = function(feature, resolution){
     var labelText = ""; 
     var value = feature.get("");
     var labelFont = "10px, sans-serif";
-    var labelFill = "#000000";
+    var labelFill = "#ebebebf2";
     var bufferColor = "";
     var bufferWidth = 0;
     var textAlign = "left";
@@ -21,7 +21,7 @@ var style_Manzanas_Limatambo_1 = function(feature, resolution){
         labelText = String("");
     }
     var style = [ new ol.style.Style({
-        stroke: new ol.style.Stroke({color: 'rgba(35,35,35,1.0)', lineDash: [3.8,0.76,1.52,0.76], lineCap: 'butt', lineJoin: 'miter', width: 0.76}),
+        stroke: new ol.style.Stroke({color: 'rgba(235,235,235,0.95)', lineDash: [3.8,0.76,1.52,0.76], lineCap: 'butt', lineJoin: 'miter', width: 1.40}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
                               bufferWidth)

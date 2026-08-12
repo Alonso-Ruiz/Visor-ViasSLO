@@ -179,6 +179,26 @@
             });
         }
 
+        var pdfsLimatamboPorCodigo = {};
+        if (Array.isArray(window.PDF_MANIFEST)) {
+            window.PDF_MANIFEST.forEach(function(fileName) {
+                var match = String(fileName).match(/^((?:SM|PSJ)-TL-\d+)/i);
+                if (match) {
+                    pdfsLimatamboPorCodigo[match[1].toUpperCase()] = fileName;
+                }
+            });
+        }
+
+        function obtenerPdfLimatambo(codigo) {
+            return pdfsLimatamboPorCodigo[String(codigo || '').trim().toUpperCase()] || null;
+        }
+
+        function obtenerCodigoSubmanzanaLimatambo(manzana) {
+            var numero = parseInt(manzana, 10);
+            if (!isFinite(numero) || numero < 2 || numero > 22) return null;
+            return 'SM-TL-' + String(numero - 1).padStart(2, '0');
+        }
+
         leerFeatures(datosTorresSanBorja).forEach(function(f) {
             var tipo = normalizarTextoPlano(f.get('Tipo') || '');
             if (tipo === 'alameda') {
@@ -228,6 +248,10 @@
                 f.set('NOMBRE', f.get('Nombre') || f.get('NOMBRE') || '-');
                 f.set('CODIGO', getPropFlexible(f.getProperties(), 'Código', 'CODIGO', 'CÓDIGO') || '-');
                 f.set('CLASIFICAC', f.get('Clasificac') || f.get('CLASIFICAC') || '-');
+                var pdfLimatambo = obtenerPdfLimatambo(f.get('CODIGO'));
+                if (pdfLimatambo && !f.get('Linkvercel') && !f.get('LINKVERCEL')) {
+                    f.set('Linkvercel', pdfLimatambo);
+                }
                 if (tipo === 'alameda') {
                     featsLimatamboAlameda.push(f);
                 } else if (tipo === 'calle') {
@@ -244,10 +268,15 @@
 
         if (datosManzanasLimatambo) {
             leerFeatures(datosManzanasLimatambo).forEach(function(f) {
+                var codigoSubmanzana = obtenerCodigoSubmanzanaLimatambo(f.get('Manzana'));
+                var pdfSubmanzana = obtenerPdfLimatambo(codigoSubmanzana);
                 f.set('_grupoEspecial', 'Torres de Limatambo');
                 f.set('Tipo', 'Submanzana');
                 f.set('NOMBRE', 'Submanzana ' + (f.get('Manzana') || '-'));
-                f.set('CODIGO', f.get('Manzana') || '-');
+                f.set('CODIGO', codigoSubmanzana || f.get('Manzana') || '-');
+                if (pdfSubmanzana) {
+                    f.set('Linkvercel', pdfSubmanzana);
+                }
                 featsLimatamboSubmanzana.push(f);
             });
         }
