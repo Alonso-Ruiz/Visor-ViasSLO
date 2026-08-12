@@ -1,7 +1,7 @@
 function cerrarPortada() {
                 var modal = document.getElementById('welcome-modal');
                 if(modal) { modal.style.opacity = '0'; setTimeout(function() { modal.style.display = 'none'; }, 400); }
-                mostrarInfoTitulo(4200);
+                mostrarInfoTitulo(30000, { mantenerAyuda: true });
             }
             function toggleDef(id) {
                 var el = document.getElementById(id);
@@ -9,30 +9,65 @@ function cerrarPortada() {
             }
 
             var titleInfoTimer = null;
+            var titleHintTimer = null;
 
             function ocultarInfoTitulo() {
+                var anexos = document.getElementById('anexos-detalle');
+                if (anexos && anexos.open) {
+                    mostrarInfoTitulo(50000);
+                    return;
+                }
                 var title = document.getElementById('title-container');
                 if (title) title.classList.add('title-hidden');
+                mostrarAyudaInfoTitulo(9000);
             }
 
-            function mostrarInfoTitulo(duration) {
+            function mostrarInfoTitulo(duration, options) {
                 var title = document.getElementById('title-container');
                 if (!title) return;
                 title.classList.remove('title-hidden');
+                if (!options || !options.mantenerAyuda) {
+                    ocultarAyudaInfoTitulo();
+                }
                 if (titleInfoTimer) window.clearTimeout(titleInfoTimer);
                 if (duration) {
                     titleInfoTimer = window.setTimeout(ocultarInfoTitulo, duration);
                 }
             }
 
+            function ocultarAyudaInfoTitulo() {
+                var hint = document.getElementById('info-title-hint');
+                if (hint) hint.classList.remove('is-visible');
+                if (titleHintTimer) window.clearTimeout(titleHintTimer);
+            }
+
+            function mostrarAyudaInfoTitulo(duration) {
+                var hint = document.getElementById('info-title-hint');
+                if (!hint) return;
+                hint.classList.add('is-visible');
+                if (titleHintTimer) window.clearTimeout(titleHintTimer);
+                titleHintTimer = window.setTimeout(ocultarAyudaInfoTitulo, duration || 9000);
+            }
+
             function inicializarInfoTitulo() {
                 var button = document.getElementById('btn-info-title');
+                var anexos = document.getElementById('anexos-detalle');
                 if (button) {
                     button.addEventListener('click', function() {
-                        mostrarInfoTitulo(6500);
+                        mostrarInfoTitulo(50000);
                     });
                 }
-                mostrarInfoTitulo(5200);
+                if (anexos) {
+                    anexos.addEventListener('toggle', function() {
+                        if (anexos.open) {
+                            mostrarInfoTitulo(90000);
+                        } else {
+                            mostrarInfoTitulo(50000);
+                        }
+                    });
+                }
+                mostrarInfoTitulo(30000, { mantenerAyuda: true });
+                mostrarAyudaInfoTitulo(40000);
             }
 
         // =========================================================
