@@ -143,6 +143,8 @@
         var featsTorresAlameda = [];
         var featsTorresPasaje = [];
         var featsTorresServidumbre = [];
+        var featsTorresLotes = [];
+        var featsTorresEpi = [];
         var featsJuanXXIIIAlameda = [];
         var featsJuanXXIIISubmanzana = [];
         var featsJuanXXIIISubmanzanaPoligono = [];
@@ -209,6 +211,20 @@
                 featsTorresServidumbre.push(f);
             }
         });
+
+        if (datosLotesTorresSanBorja) {
+            leerFeatures(datosLotesTorresSanBorja).forEach(function(f) {
+                f.set('_sourceLayer', 'torres_lotes');
+                featsTorresLotes.push(f);
+            });
+        }
+
+        if (datosEpiTorresSanBorja) {
+            leerFeatures(datosEpiTorresSanBorja).forEach(function(f) {
+                f.set('_sourceLayer', 'torres_epi');
+                featsTorresEpi.push(f);
+            });
+        }
 
         leerFeatures(datosAlamedasSubmanzanas).forEach(function(f) {
             f.set('_sourceLayer', 'alamedas_submanzanas');
@@ -295,6 +311,8 @@
             });
         }
 
+        var layerTorresLotes = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresLotes }), style: typeof style_Lotes_0 !== 'undefined' ? style_Lotes_0 : styleHighlightFn, zIndex: 3.8, declutter: true });
+        var layerTorresEpi = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresEpi }), style: typeof style_EPI_TorresdeSanBorja_2 !== 'undefined' ? style_EPI_TorresdeSanBorja_2 : styleHighlightFn, zIndex: 3.7, declutter: true });
         var layerTorresAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresAlameda }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresPasaje }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });
         var layerTorresServidumbre = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsTorresServidumbre }), style: styleTorresSanBorjaFn, zIndex: 4, declutter: true });

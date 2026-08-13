@@ -9,7 +9,7 @@
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mt1.google.com; connect-src 'self' https://mt1.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
         
         <link rel="stylesheet" href="vendor/openlayers/ol.css">
-        <link rel="stylesheet" href="css/main.css?v=20260812-info-anexos">
+        <link rel="stylesheet" href="css/main.css?v=20260813-torres-submanzana">
         <link rel="icon" type="image/png" href="Escudo_de_San_Borja.png">
         <link rel="apple-touch-icon" href="Escudo_de_San_Borja.png">
         <title>Sistema Vial - San Borja</title>
@@ -52,6 +52,10 @@
 
         <button id="btn-info-title" class="info-title-button" title="Mostrar información del visor" aria-label="Mostrar información del visor">i</button>
         <div id="info-title-hint" class="info-title-hint" aria-hidden="true">Clic para ver anexos</div>
+        <button id="btn-streetview" class="streetview-button" title="Abrir Street View" aria-label="Abrir Street View">
+            <img src="assets/pegman-trim.png" alt="">
+        </button>
+        <img id="streetview-drag-ghost" class="streetview-drag-ghost" src="assets/pegman-trim.png" alt="">
 
         <div id="map">
             <div id="capa-protectora"></div>
@@ -277,6 +281,12 @@
                                 <span class="layer-title" data-toggle-checkbox="chk-torres-servidumbre">Servidumbre de paso</span>
                             </div>
                         </div>
+                        <div class="sub-layer layer-border-torres-submanzana">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-torres-submanzana" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-torres-submanzana">Submanzanas</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -323,7 +333,9 @@
         <script src="layers/Secciones_Viales_3_1.js"></script>
         <script src="layers/subsectores_1.js"></script>
         <script src="layers/Sectores_2.js"></script>
-        <script src="layers/PlantasdeAlamedasypasajes_2.js"></script>
+        <script src="layers/PlantasdeAlamedasypasajes_2.js?v=20260813-torres-poligonos"></script>
+        <script src="layers/Lotes_0.js?v=20260813-torres-poligonos"></script>
+        <script src="layers/EPI_TorresdeSanBorja_2.js?v=20260813-torres-poligonos"></script>
         <script src="layers/ALAMEDASDESUBMANZANAS_3.js"></script>
         <script src="layers/BORDEDESUBMANZANAYREALIBRE_7.js"></script>
         <script src="layers/SUBMANZANAS_1.js"></script>
@@ -333,10 +345,12 @@
         <script src="layers/Lotes_Limatambo_2.js?v=20260811-limatambo-submanzanas"></script>
         <script src="layers/reastechadas_3.js?v=20260811-limatambo-submanzanas"></script>
         <script src="js/pdf-manifest.js?v=20260812-sm-limatambo"></script>
-        <script src="js/utils.js?v=20260812-info-anexos"></script>
+        <script src="js/utils.js?v=20260813-torres-poligonos"></script>
         <script src="styles/subsectores_1_style.js"></script>
         <script src="styles/Sectores_2_style.js"></script>
         <script src="styles/PlantasdeAlamedasypasajes_2_style.js"></script>
+        <script src="styles/Lotes_0_style.js?v=20260813-torres-poligonos"></script>
+        <script src="styles/EPI_TorresdeSanBorja_2_style.js?v=20260813-torres-poligonos"></script>
         <script src="styles/ALAMEDASDESUBMANZANAS_3_style.js"></script>
         <script src="styles/BORDEDESUBMANZANAYREALIBRE_7_style.js"></script>
         <script src="styles/SUBMANZANAS_1_style.js"></script>
@@ -345,8 +359,9 @@
         <script src="styles/Manzanas_Limatambo_1_style.js?v=20260811-limatambo-submanzanas"></script>
         <script src="styles/Lotes_Limatambo_2_style.js?v=20260811-lotes-rayado"></script>
         <script src="styles/reastechadas_3_style.js?v=20260811-limatambo-submanzanas"></script>
-        <script src="js/layers.js?v=20260812-sm-limatambo"></script>
-        <script src="js/map.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="js/layers.js?v=20260813-torres-poligonos"></script>
+        <script src="js/map.js?v=20260813-torres-submanzana"></script>
+        <script src="js/streetview.js?v=20260813-streetview-cancel"></script>
         <script src="js/popup.js?v=20260811-limatambo"></script>
         <script src="js/search.js?v=20260811-limatambo-submanzanas"></script>
         <script src="js/app.js?v=20260812-info-anexos"></script>

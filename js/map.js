@@ -1,7 +1,7 @@
         var map = new ol.Map({
             target: 'map',
             renderer: ['webgl', 'canvas'],
-            layers: [googleSat, layerSectores, layerSubsectores, layerJuanXXIIISubmanzanaPoligono, layerJuanXXIIIAreasLibresSubmanzana, layerLimatamboAreasTechadas, layerLimatamboLotes, layerLimatamboSubmanzana, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerLimatamboAlameda, layerLimatamboCalle, layerLimatamboJiron, layerLimatamboPasaje, layerLimatamboServidumbre, layerJuanXXIIISubmanzana, layerJuanXXIIIAlameda, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
+            layers: [googleSat, layerSectores, layerSubsectores, layerJuanXXIIISubmanzanaPoligono, layerJuanXXIIIAreasLibresSubmanzana, layerTorresEpi, layerTorresLotes, layerLimatamboAreasTechadas, layerLimatamboLotes, layerLimatamboSubmanzana, layerTorresAlameda, layerTorresPasaje, layerTorresServidumbre, layerLimatamboAlameda, layerLimatamboCalle, layerLimatamboJiron, layerLimatamboPasaje, layerLimatamboServidumbre, layerJuanXXIIISubmanzana, layerJuanXXIIIAlameda, layerSecciones, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda, layerPref, layerMetroColectora, layerMetroArterial, layerMetroExpresa, layerSectoresLabels, layerSubsectoresLabels, layerHighlight, layerLimite],
             view: new ol.View({ center: ol.proj.fromLonLat([-76.9933, -12.0951]), zoom: 14, minZoom: 13, maxZoom: 22 }),
             controls: [new ol.control.ScaleLine()]
         });
@@ -31,9 +31,10 @@
 
 
         map.on('singleclick', function(evt) {
+            if (document.body.classList.contains('streetview-targeting')) return;
             var clickedLayer = null;
             var feature = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
-                if (l === layerLimite || l === layerHighlight || l === layerSecciones || l === layerJuanXXIIISubmanzana || l === layerJuanXXIIISubmanzanaPoligono || l === layerJuanXXIIIAreasLibresSubmanzana || l === layerLimatamboLotes || l === layerLimatamboAreasTechadas) return null;
+                if (l === layerLimite || l === layerHighlight || l === layerSecciones || l === layerJuanXXIIISubmanzana || l === layerJuanXXIIISubmanzanaPoligono || l === layerJuanXXIIIAreasLibresSubmanzana || l === layerTorresLotes || l === layerTorresEpi || l === layerLimatamboLotes || l === layerLimatamboAreasTechadas) return null;
                 clickedLayer = l;
                 return f;
             }, { hitTolerance: 10 }); 
@@ -58,7 +59,7 @@
             if (evt.dragging) return;
 
             var hit = map.forEachFeatureAtPixel(evt.pixel, function(f, l) {
-                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones && l !== layerJuanXXIIISubmanzana && l !== layerJuanXXIIISubmanzanaPoligono && l !== layerJuanXXIIIAreasLibresSubmanzana && l !== layerLimatamboLotes && l !== layerLimatamboAreasTechadas) ? true : false;
+                return (l !== layerLimite && l !== layerHighlight && l !== layerSecciones && l !== layerJuanXXIIISubmanzana && l !== layerJuanXXIIISubmanzanaPoligono && l !== layerJuanXXIIIAreasLibresSubmanzana && l !== layerTorresLotes && l !== layerTorresEpi && l !== layerLimatamboLotes && l !== layerLimatamboAreasTechadas) ? true : false;
             }, { hitTolerance: 10 });
 
             var viewport = map.getViewport();
@@ -204,7 +205,7 @@
         });
 
         var chkTorresMaster = document.getElementById('chk-torres');
-        var subsTorres = ['chk-torres-alameda', 'chk-torres-pasaje', 'chk-torres-servidumbre'];
+        var subsTorres = ['chk-torres-alameda', 'chk-torres-pasaje', 'chk-torres-servidumbre', 'chk-torres-submanzana'];
 
         chkTorresMaster.addEventListener('change', function(e) {
             var isChecked = e.target.checked;
@@ -299,6 +300,7 @@
             var chkTorresAlameda = document.getElementById('chk-torres-alameda');
             var chkTorresPasaje = document.getElementById('chk-torres-pasaje');
             var chkTorresServidumbre = document.getElementById('chk-torres-servidumbre');
+            var chkTorresSubmanzana = document.getElementById('chk-torres-submanzana');
             var chkJuanXXIIIAlameda = document.getElementById('chk-juan-xxiii-alameda');
             var chkJuanXXIIISubmanzana = document.getElementById('chk-juan-xxiii-submanzana');
             var chkLimatamboAlameda = document.getElementById('chk-limatambo-alameda');
@@ -316,6 +318,8 @@
             layerTorresAlameda.setVisible(chkTorresAlameda && chkTorresAlameda.checked && z >= 13);
             layerTorresPasaje.setVisible(chkTorresPasaje && chkTorresPasaje.checked && z >= 13);
             layerTorresServidumbre.setVisible(chkTorresServidumbre && chkTorresServidumbre.checked && z >= 13);
+            layerTorresLotes.setVisible(chkTorresSubmanzana && chkTorresSubmanzana.checked && z >= 13);
+            layerTorresEpi.setVisible(chkTorresSubmanzana && chkTorresSubmanzana.checked && z >= 13);
             layerJuanXXIIIAlameda.setVisible(chkJuanXXIIIAlameda && chkJuanXXIIIAlameda.checked && z >= 13);
             layerJuanXXIIISubmanzana.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
             layerJuanXXIIISubmanzanaPoligono.setVisible(chkJuanXXIIISubmanzana && chkJuanXXIIISubmanzana.checked && z >= 13);
@@ -354,22 +358,29 @@
         var panel = document.getElementById('panel-usos');
         var btnAbrirPanel = document.getElementById('btn-abrir-panel');
         var btnCerrarPanel = document.getElementById('btn-cerrar-panel');
+        var setPanelAbierto = function(abierto) {
+            document.body.classList.toggle('panel-open', abierto);
+        };
 
         btnCerrarPanel.addEventListener('click', function() { 
             panel.classList.add('oculto'); 
-            btnAbrirPanel.style.display = 'flex'; 
+            btnAbrirPanel.style.display = 'flex';
+            setPanelAbierto(false);
         });
         
         btnAbrirPanel.addEventListener('click', function() { 
             panel.classList.remove('oculto'); 
-            this.style.display = 'none'; 
+            this.style.display = 'none';
+            setPanelAbierto(true);
         });
 
         if (window.innerWidth <= 896) {
             panel.classList.add('oculto');
             btnAbrirPanel.style.display = 'flex';
+            setPanelAbierto(false);
         } else {
             panel.classList.remove('oculto');
             btnAbrirPanel.style.display = 'none';
+            setPanelAbierto(true);
         }
 
