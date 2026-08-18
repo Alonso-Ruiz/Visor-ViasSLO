@@ -37,6 +37,10 @@
     function isVisualOnlyLayer(layer) {
         return layer === layerLimite ||
             layer === layerHighlight ||
+            layer === layerSectores ||
+            layer === layerSubsectores ||
+            layer === layerSectoresLabels ||
+            layer === layerSubsectoresLabels ||
             layer === layerSecciones ||
             layer === layerJuanXXIIISubmanzana ||
             layer === layerJuanXXIIISubmanzanaPoligono ||
@@ -45,6 +49,14 @@
             layer === layerTorresEpi ||
             layer === layerLimatamboLotes ||
             layer === layerLimatamboAreasTechadas;
+    }
+
+    function getStreetViewFeatureAtPixel(pixel) {
+        if (!pixel) return null;
+        return map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+            if (isVisualOnlyLayer(layer)) return null;
+            return feature;
+        }, { hitTolerance: 12 });
     }
 
     function isInsideSanBorja(coordinate) {
@@ -64,10 +76,7 @@
 
     function highlightFeatureAtPixel(pixel) {
         if (!pixel || typeof sourceHighlight === 'undefined') return null;
-        var selected = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
-            if (isVisualOnlyLayer(layer)) return null;
-            return feature;
-        }, { hitTolerance: 12 });
+        var selected = getStreetViewFeatureAtPixel(pixel);
 
         sourceHighlight.clear();
         if (selected) sourceHighlight.addFeature(selected);
@@ -94,12 +103,16 @@
         return Math.round((Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360);
     }
 
-    function openStreetView(coordinate, heading) {
+    function openStreetView(coordinate, heading, pixel) {
         if (!coordinate) {
             cancelStreetViewMode();
             return;
         }
         if (!isInsideSanBorja(coordinate)) {
+            cancelStreetViewMode();
+            return;
+        }
+        if (!getStreetViewFeatureAtPixel(pixel)) {
             cancelStreetViewMode();
             return;
         }
@@ -141,9 +154,11 @@
         button.releasePointerCapture(evt.pointerId);
         var moved = Math.hypot(evt.clientX - startPixel[0], evt.clientY - startPixel[1]) > 8;
         var coordinate = getCoordinateFromClient(evt.clientX, evt.clientY);
+        var rect = mapEl.getBoundingClientRect();
+        var pixel = [evt.clientX - rect.left, evt.clientY - rect.top];
         var heading = calculateHeading(startPixel, [evt.clientX, evt.clientY]);
         if (moved && coordinate) {
-            openStreetView(coordinate, heading);
+            openStreetView(coordinate, heading, pixel);
         } else if (!moved) {
             setTargeting(!wasTargetingBeforeDrag);
             hideGhost();
@@ -164,7 +179,7 @@
 
     map.on('singleclick', function(evt) {
         if (!targeting || dragging) return;
-        openStreetView(evt.coordinate, 0);
+        openStreetView(evt.coordinate, 0, evt.pixel);
     });
 
     document.addEventListener('keydown', function(evt) {
