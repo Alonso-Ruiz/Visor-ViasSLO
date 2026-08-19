@@ -61,7 +61,10 @@
         indexarOLFeatures(layerMetroArterial.getSource().getFeatures(), true, 'arterial');
         indexarOLFeatures(layerMetroColectora.getSource().getFeatures(), true, 'colectora');
         indexarOLFeatures(layerMetroExpresa.getSource().getFeatures(), true, 'expresa');
-        indexarOLFeatures(layerPref.getSource().getFeatures(), false);
+        indexarOLFeatures(layerPrefAvenida.getSource().getFeatures(), false);
+        indexarOLFeatures(layerPrefCalle.getSource().getFeatures(), false);
+        indexarOLFeatures(layerPrefJiron.getSource().getFeatures(), false);
+        indexarOLFeatures(layerPrefPasaje.getSource().getFeatures(), false);
         indexarOLFeatures(layerSecVehicular.getSource().getFeatures(), false);
         indexarOLFeatures(layerSecRestringido.getSource().getFeatures(), false);
         indexarOLFeatures(layerSecPasaje.getSource().getFeatures(), false);

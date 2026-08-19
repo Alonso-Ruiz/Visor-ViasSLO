@@ -93,7 +93,7 @@
             dragBox.on('boxend', function() {
                 var extent = dragBox.getGeometry().getExtent();
                 var selectedFeatures = [];
-                var layersToSelect = [layerMetroArterial, layerMetroColectora, layerMetroExpresa, layerPref, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda];
+                var layersToSelect = [layerMetroArterial, layerMetroColectora, layerMetroExpresa, layerPrefAvenida, layerPrefCalle, layerPrefJiron, layerPrefPasaje, layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda];
 
                 layersToSelect.forEach(function(layer) {
                     if(layer.getVisible()) {
@@ -140,6 +140,32 @@
         subsMetro.forEach(id => {
             document.getElementById(id).addEventListener('change', function() {
                 updateMasterMetroState();
+                actualizarVisibilidadCapas();
+            });
+        });
+
+        var chkPrefMaster = document.getElementById('chk-pref');
+        var subsPref = ['chk-pref-av', 'chk-pref-ca', 'chk-pref-jr', 'chk-pref-pa'];
+
+        chkPrefMaster.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            subsPref.forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.checked = isChecked;
+            });
+            actualizarVisibilidadCapas();
+        });
+
+        function updateMasterPrefState() {
+            var allChecked = subsPref.every(id => document.getElementById(id).checked);
+            var anyChecked = subsPref.some(id => document.getElementById(id).checked);
+            chkPrefMaster.checked = allChecked;
+            chkPrefMaster.indeterminate = !allChecked && anyChecked;
+        }
+
+        subsPref.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                updateMasterPrefState();
                 actualizarVisibilidadCapas();
             });
         });
@@ -289,7 +315,10 @@
             var chkMetroArt = document.getElementById('chk-metro-art');
             var chkMetroCol = document.getElementById('chk-metro-col');
             var chkMetroExp = document.getElementById('chk-metro-exp');
-            var chkPref = document.getElementById('chk-pref');
+            var chkPrefAv = document.getElementById('chk-pref-av');
+            var chkPrefCa = document.getElementById('chk-pref-ca');
+            var chkPrefJr = document.getElementById('chk-pref-jr');
+            var chkPrefPa = document.getElementById('chk-pref-pa');
             var chkSecVeh = document.getElementById('chk-sec-veh');
             var chkSecRes = document.getElementById('chk-sec-res');
             var chkSecPas = document.getElementById('chk-sec-pas');
@@ -337,7 +366,10 @@
             layerMetroExpresa.setVisible(chkMetroExp && chkMetroExp.checked && z >= 13);
             
             var showLocales = z >= 13;
-            layerPref.setVisible(chkPref && chkPref.checked && showLocales);
+            layerPrefAvenida.setVisible(chkPrefAv && chkPrefAv.checked && showLocales);
+            layerPrefCalle.setVisible(chkPrefCa && chkPrefCa.checked && showLocales);
+            layerPrefJiron.setVisible(chkPrefJr && chkPrefJr.checked && showLocales);
+            layerPrefPasaje.setVisible(chkPrefPa && chkPrefPa.checked && showLocales);
             layerSecVehicular.setVisible(chkSecVeh && chkSecVeh.checked && showLocales);
             layerSecRestringido.setVisible(chkSecRes && chkSecRes.checked && showLocales);
             layerSecPasaje.setVisible(chkSecPas && chkSecPas.checked && showLocales);
@@ -348,7 +380,7 @@
         
         map.getView().on('change:resolution', actualizarVisibilidadCapas);
         
-        ['chk-pref', 'chk-secciones', 'chk-limite'].forEach(id => {
+        ['chk-secciones', 'chk-limite'].forEach(id => {
             var el = document.getElementById(id);
             if (el) el.addEventListener('change', actualizarVisibilidadCapas);
         });

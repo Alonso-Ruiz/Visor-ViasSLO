@@ -89,7 +89,10 @@
         var featsMetroArterial = [];
         var featsMetroColectora = [];
         var featsMetroExpresa = [];
-        var featsPref = [];
+        var featsPrefAvenida = [];
+        var featsPrefCalle = [];
+        var featsPrefJiron = [];
+        var featsPrefPasaje = [];
         var featsSecVehicular = [];
         var featsSecRestringido = [];
         var featsSecPasaje = [];
@@ -114,7 +117,15 @@
                     featsMetroColectora.push(f);
                 }
             } else if (clas.includes('preferencial')) {
-                featsPref.push(f);
+                if (cat.includes('pasaje') || nom.includes('pasaje') || nom.startsWith('psj')) {
+                    featsPrefPasaje.push(f);
+                } else if (cat.includes('jiron') || cat.includes('jirón') || nom.includes('jirón') || nom.includes('jiron') || nom.startsWith('jr')) {
+                    featsPrefJiron.push(f);
+                } else if (cat.includes('avenida') || nom.includes('avenida') || nom.startsWith('av')) {
+                    featsPrefAvenida.push(f);
+                } else {
+                    featsPrefCalle.push(f);
+                }
             } else if (cat.includes('pasaje') || nom.includes('pasaje') || nom.startsWith('psj')) {
                 featsSecPasaje.push(f);
             } else if (cat.includes('alameda') || nom.includes('alameda') || nom.startsWith('al.')) {
@@ -129,7 +140,11 @@
         var layerMetroArterial = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsMetroArterial }), style: styleMetroArterialFn, zIndex: 9, declutter: true });
         var layerMetroColectora = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsMetroColectora }), style: styleMetroColectoraFn, zIndex: 8, declutter: true });
         var layerMetroExpresa = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsMetroExpresa }), style: styleMetroExpresaFn, zIndex: 10, declutter: true });
-        var layerPref = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsPref }), style: stylePrefFn, zIndex: 6, declutter: true });
+        var layerPrefAvenida = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsPrefAvenida }), style: stylePrefFn, zIndex: 6, declutter: true });
+        var layerPrefCalle = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsPrefCalle }), style: stylePrefFn, zIndex: 6, declutter: true });
+        var layerPrefJiron = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsPrefJiron }), style: stylePrefFn, zIndex: 6, declutter: true });
+        var layerPrefPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsPrefPasaje }), style: stylePrefFn, zIndex: 6, declutter: true });
+        var layerPref = new ol.layer.Group({ layers: [layerPrefAvenida, layerPrefCalle, layerPrefJiron, layerPrefPasaje] });
         var layerSecVehicular = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsSecVehicular }), style: styleSecVehFn, zIndex: 5, declutter: true });
         var layerSecRestringido = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsSecRestringido }), style: styleSecResFn, zIndex: 5, declutter: true });
         var layerSecPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsSecPasaje }), style: styleSecPasFn, zIndex: 5, declutter: true });

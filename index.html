@@ -163,15 +163,44 @@
                 <div class="layer-toggle layer-border-pref">
                     <div class="layer-header">
                         <input type="checkbox" id="chk-pref" checked>
-                        <span class="layer-title" data-toggle-def="def-pref">Vía Local Principal (Preferencial) ▾</span>
+                        <span class="layer-title" data-toggle-def="def-pref">Vías Locales Preferenciales ▾</span>
                     </div>
-                    <div class="layer-def" id="def-pref">Ejes arteriales del distrito con función de conectividad entre sectores urbanos y acceso a centralidades.</div>
+                    <div class="layer-def" id="def-pref">
+                        Son vías locales que, además de brindar acceso a los predios colindantes, cumplen una función de conectividad interna entre sectores urbanos y de enlace con vías colectoras o arteriales, concentrando mayores flujos de tránsito local y funcionando como rutas preferentes dentro de barrios o urbanizaciones.
+                        <br><strong>Según nomenclatura vial:</strong>
+                    </div>
+                    <div class="sub-layer-container">
+                        <div class="sub-layer layer-border-pref">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-pref-av" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-pref-av">Avenida</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-pref">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-pref-ca" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-pref-ca">Calle</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-pref">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-pref-jr" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-pref-jr">Jirón</span>
+                            </div>
+                        </div>
+                        <div class="sub-layer layer-border-pref">
+                            <div class="layer-header">
+                                <input type="checkbox" id="chk-pref-pa" checked>
+                                <span class="layer-title" data-toggle-checkbox="chk-pref-pa">Pasaje</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="layer-toggle layer-border-sec">
                     <div class="layer-header">
                         <input type="checkbox" id="chk-sec" checked>
-                        <span class="layer-title" data-toggle-def="def-sec">Vía Local Secundaria ▾</span>
+                        <span class="layer-title" data-toggle-def="def-sec">Vías Locales Secundarias ▾</span>
                     </div>
                     <div class="layer-def layer-def-flat" id="def-sec">Calles de escala barrial o vecinal que distribuyen el tránsito local.</div>
                     
@@ -320,7 +349,7 @@
                 </div>
 
                 <div class="slider-container">
-                    <label for="sat-opacity">Transparencia del Satélite</label>
+                    <label for="sat-opacity">Transparencia del Mapa</label>
                     <input type="range" id="sat-opacity" min="0" max="1" step="0.1" value="0.9">
                 </div>
             </div>
@@ -359,11 +388,11 @@
         <script src="styles/Manzanas_Limatambo_1_style.js?v=20260811-limatambo-submanzanas"></script>
         <script src="styles/Lotes_Limatambo_2_style.js?v=20260811-lotes-rayado"></script>
         <script src="styles/reastechadas_3_style.js?v=20260811-limatambo-submanzanas"></script>
-        <script src="js/layers.js?v=20260813-torres-poligonos"></script>
-        <script src="js/map.js?v=20260813-torres-submanzana"></script>
+        <script src="js/layers.js?v=20260819-pref-subsecciones"></script>
+        <script src="js/map.js?v=20260819-pref-subsecciones"></script>
         <script src="js/streetview.js?v=20260818-streetview-vias-only"></script>
         <script src="js/popup.js?v=20260811-limatambo"></script>
-        <script src="js/search.js?v=20260811-limatambo-submanzanas"></script>
+        <script src="js/search.js?v=20260819-pref-subsecciones"></script>
         <script src="js/app.js?v=20260812-info-anexos"></script>
     </body>
 </html>
