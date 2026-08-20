@@ -83,6 +83,9 @@
 
             var linkRaw = obtenerLinkDocumento(p, null);
             var urlPdf = construirUrlDocumento(linkRaw, codigo);
+            if (!urlPdf && p._grupoEspecial === 'Torres de Limatambo') {
+                urlPdf = resolverUrlPdfLimatambo(p, codigo);
+            }
             if (urlPdf) {
                 var btn = document.createElement('a');
                 btn.href = urlPdf;
@@ -158,6 +161,31 @@
             }
 
             return fileName ? "pdf/" + fileName : null;
+        }
+
+        function resolverUrlPdfLimatambo(props, codigo) {
+            var codigoNormalizado = String(codigo || '').trim().toUpperCase();
+            if (codigoNormalizado && pdfManifestPorCodigo[codigoNormalizado]) {
+                return "pdf/" + pdfManifestPorCodigo[codigoNormalizado];
+            }
+
+            var nombre = fixMojibake(props.NOMBRE || props.NOMBRE_1 || props.Nombre || '').trim();
+            var candidatos = [];
+            if (nombre) {
+                candidatos.push(nombre);
+                nombre.split(/\s+y\s+/i).forEach(function(parte) {
+                    if (parte && parte.trim()) candidatos.push(parte.trim());
+                });
+            }
+
+            for (var i = 0; i < candidatos.length; i++) {
+                var key = normalizarNombrePdf(candidatos[i]);
+                if (key && pdfManifestPorTitulo[key]) {
+                    return "pdf/" + pdfManifestPorTitulo[key];
+                }
+            }
+
+            return "anexos/Anexo 15. Desarrollo de plantas de vías de trazado no lineal en Torres de Limatambo.pdf";
         }
 
         function obtenerLinkDocumento(props, fallbackProps) {
