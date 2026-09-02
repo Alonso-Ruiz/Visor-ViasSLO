@@ -384,6 +384,9 @@ body {
     justify-content: center;
     padding: 2px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .streetview-button img {
@@ -420,6 +423,83 @@ body {
 .streetview-drag-ghost.is-visible {
     opacity: 0.95;
     animation: pegman-wobble 0.55s ease-in-out infinite alternate;
+}
+
+.opacity-toggle-button {
+    position: absolute;
+    left: 127px;
+    bottom: 20px;
+    z-index: 2100;
+    width: 28px;
+    height: 28px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.opacity-toggle-button span {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #00975D 0 50%, rgba(0, 151, 93, 0.18) 50% 100%);
+    box-shadow: inset 0 0 0 1px #00975D;
+}
+
+.opacity-toggle-button:hover,
+.opacity-toggle-button.is-active {
+    transform: translateY(-1px);
+}
+
+.opacity-toggle-button.is-active {
+    border: 2px solid #2563eb;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+}
+
+.opacity-panel {
+    position: absolute;
+    left: 16px;
+    bottom: 58px;
+    z-index: 2110;
+    width: 225px;
+    box-sizing: border-box;
+    padding: 11px 14px;
+    margin-top: 0;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.opacity-panel.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.opacity-panel label {
+    text-align: center;
+    color: #333844;
+    font-size: 12px;
+    margin-bottom: 7px;
+    line-height: 1.2;
+}
+
+.opacity-panel input[type="range"] {
+    display: block;
 }
 
 body.streetview-targeting .ol-viewport {
@@ -1100,7 +1180,7 @@ body.streetview-targeting .ol-viewport {
     position: absolute;
     left: -4px;
     top: -3px;
-    width: 112px;
+    width: 150px;
     height: 38px;
     border-radius: 9px;
     background: rgba(255, 255, 255, 0.96);
@@ -1190,6 +1270,31 @@ body.streetview-targeting .ol-viewport {
     .streetview-button img {
         width: 13px;
         height: 19px;
+    }
+
+    .opacity-toggle-button {
+        left: 108px;
+        bottom: 16px;
+        width: 24px;
+        height: 26px;
+    }
+
+    .opacity-toggle-button span {
+        width: 13px;
+        height: 13px;
+    }
+
+    .opacity-panel {
+        left: 12px;
+        bottom: 50px;
+        width: min(218px, calc(100vw - 24px));
+        padding: 10px 12px;
+        border-radius: 12px;
+    }
+
+    .opacity-panel label {
+        font-size: 11.5px;
+        margin-bottom: 6px;
     }
 
     #title-container {
@@ -1327,7 +1432,7 @@ body.streetview-targeting .ol-viewport {
     .north-arrow-ctrl::before {
         left: -4px;
         top: -3px;
-        width: 92px;
+        width: 122px;
         height: 34px;
         border-radius: 8px;
     }
@@ -1356,6 +1461,8 @@ body.streetview-targeting .ol-viewport {
 
     body.panel-open .info-title-button,
     body.panel-open .streetview-button,
+    body.panel-open .opacity-toggle-button,
+    body.panel-open .opacity-panel,
     body.panel-open .info-title-hint,
     body.panel-open .north-arrow-ctrl,
     body.panel-open .ol-scale-line {

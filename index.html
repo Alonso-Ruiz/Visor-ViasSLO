@@ -9,7 +9,7 @@
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mt1.google.com; connect-src 'self' https://mt1.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
         
         <link rel="stylesheet" href="vendor/openlayers/ol.css">
-        <link rel="stylesheet" href="css/main.css?v=20260813-torres-submanzana">
+        <link rel="stylesheet" href="css/main.css?v=20260902-opacity-compact">
         <link rel="icon" type="image/png" href="Escudo_de_San_Borja.png">
         <link rel="apple-touch-icon" href="Escudo_de_San_Borja.png">
         <title>Sistema Vial - San Borja</title>
@@ -55,6 +55,13 @@
         <button id="btn-streetview" class="streetview-button" title="Abrir Street View" aria-label="Abrir Street View">
             <img src="assets/pegman-trim.png" alt="">
         </button>
+        <button id="btn-opacity-panel" class="opacity-toggle-button" title="Controlar transparencia del mapa" aria-label="Controlar transparencia del mapa" aria-expanded="false" aria-controls="opacity-panel">
+            <span aria-hidden="true"></span>
+        </button>
+        <div id="opacity-panel" class="opacity-panel slider-container" aria-hidden="true">
+            <label for="sat-opacity">Transparencia del mapa</label>
+            <input type="range" id="sat-opacity" min="0" max="1" step="0.1" value="0.5">
+        </div>
         <img id="streetview-drag-ghost" class="streetview-drag-ghost" src="assets/pegman-trim.png" alt="">
 
         <div id="map">
@@ -359,10 +366,6 @@
                     </div>
                 </div>
 
-                <div class="slider-container">
-                    <label for="sat-opacity">Transparencia del Mapa</label>
-                    <input type="range" id="sat-opacity" min="0" max="1" step="0.1" value="0.9">
-                </div>
             </div>
         </div>
 
@@ -400,8 +403,8 @@
         <script src="styles/Lotes_Limatambo_2_style.js?v=20260811-lotes-rayado"></script>
         <script src="styles/reastechadas_3_style.js?v=20260811-limatambo-submanzanas"></script>
         <script src="js/layers.js?v=20260819-pref-subsecciones"></script>
-        <script src="js/map.js?v=20260819-pref-subsecciones"></script>
-        <script src="js/streetview.js?v=20260818-streetview-vias-only"></script>
+        <script src="js/map.js?v=20260902-opacity-control"></script>
+        <script src="js/streetview.js?v=20260902-mobile-drag"></script>
         <script src="js/popup.js?v=20260820-limatambo-pdf"></script>
         <script src="js/search.js?v=20260819-pref-subsecciones"></script>
         <script src="js/app.js?v=20260812-info-anexos"></script>

@@ -385,13 +385,44 @@
             if (el) el.addEventListener('change', actualizarVisibilidadCapas);
         });
 
-        document.getElementById('sat-opacity').addEventListener('input', function(e) { googleSat.setOpacity(parseFloat(e.target.value)); });
+        var satOpacityInput = document.getElementById('sat-opacity');
+        var btnOpacityPanel = document.getElementById('btn-opacity-panel');
+        var opacityPanel = document.getElementById('opacity-panel');
+
+        function setOpacityPanelOpen(open) {
+            if (!btnOpacityPanel || !opacityPanel) return;
+            opacityPanel.classList.toggle('is-open', open);
+            btnOpacityPanel.classList.toggle('is-active', open);
+            btnOpacityPanel.setAttribute('aria-expanded', open ? 'true' : 'false');
+            opacityPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+
+        if (satOpacityInput) {
+            googleSat.setOpacity(parseFloat(satOpacityInput.value));
+            satOpacityInput.addEventListener('input', function(e) {
+                googleSat.setOpacity(parseFloat(e.target.value));
+            });
+        }
+
+        if (btnOpacityPanel && opacityPanel) {
+            btnOpacityPanel.addEventListener('click', function(e) {
+                e.stopPropagation();
+                setOpacityPanelOpen(!opacityPanel.classList.contains('is-open'));
+            });
+            opacityPanel.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            document.addEventListener('click', function() {
+                setOpacityPanelOpen(false);
+            });
+        }
         
         var panel = document.getElementById('panel-usos');
         var btnAbrirPanel = document.getElementById('btn-abrir-panel');
         var btnCerrarPanel = document.getElementById('btn-cerrar-panel');
         var setPanelAbierto = function(abierto) {
             document.body.classList.toggle('panel-open', abierto);
+            if (abierto) setOpacityPanelOpen(false);
         };
 
         btnCerrarPanel.addEventListener('click', function() { 

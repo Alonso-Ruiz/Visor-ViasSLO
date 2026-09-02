@@ -6,6 +6,7 @@
     var dragging = false;
     var startPixel = null;
     var wasTargetingBeforeDrag = false;
+    var activePointerId = null;
 
     if (!button || !mapEl || typeof map === 'undefined' || typeof ol === 'undefined') return;
 
@@ -29,6 +30,7 @@
 
     function cancelStreetViewMode() {
         dragging = false;
+        activePointerId = null;
         setTargeting(false);
         hideGhost();
         clearStreetViewHighlight();
@@ -129,29 +131,43 @@
         clearStreetViewHighlight();
     }
 
-    button.addEventListener('pointerdown', function(evt) {
-        if (evt.button !== 0) return;
+    function beginStreetViewDrag(evt) {
+        if (dragging) return;
+        if (evt.pointerType === 'mouse' && evt.button !== 0) return;
         dragging = true;
+        activePointerId = evt.pointerId;
         startPixel = [evt.clientX, evt.clientY];
         wasTargetingBeforeDrag = targeting;
         setTargeting(true);
         updateGhost(evt.clientX, evt.clientY);
-        button.setPointerCapture(evt.pointerId);
+        if (button.setPointerCapture) {
+            try {
+                button.setPointerCapture(evt.pointerId);
+            } catch (error) {}
+        }
         evt.preventDefault();
-    });
+        evt.stopPropagation();
+    }
 
-    button.addEventListener('pointermove', function(evt) {
+    function moveStreetViewDrag(evt) {
         if (!dragging) return;
+        if (activePointerId !== null && evt.pointerId !== activePointerId) return;
         updateGhost(evt.clientX, evt.clientY);
         var rect = mapEl.getBoundingClientRect();
         highlightFeatureAtPixel([evt.clientX - rect.left, evt.clientY - rect.top]);
         evt.preventDefault();
-    });
+    }
 
-    button.addEventListener('pointerup', function(evt) {
+    function endStreetViewDrag(evt) {
         if (!dragging) return;
+        if (activePointerId !== null && evt.pointerId !== activePointerId) return;
         dragging = false;
-        button.releasePointerCapture(evt.pointerId);
+        activePointerId = null;
+        if (button.releasePointerCapture) {
+            try {
+                button.releasePointerCapture(evt.pointerId);
+            } catch (error) {}
+        }
         var moved = Math.hypot(evt.clientX - startPixel[0], evt.clientY - startPixel[1]) > 8;
         var coordinate = getCoordinateFromClient(evt.clientX, evt.clientY);
         var rect = mapEl.getBoundingClientRect();
@@ -166,9 +182,13 @@
             cancelStreetViewMode();
         }
         evt.preventDefault();
-    });
+    }
 
-    button.addEventListener('pointercancel', function() {
+    button.addEventListener('pointerdown', beginStreetViewDrag);
+    document.addEventListener('pointermove', moveStreetViewDrag, { passive: false });
+    document.addEventListener('pointerup', endStreetViewDrag, { passive: false });
+    document.addEventListener('pointercancel', function(evt) {
+        if (activePointerId !== null && evt.pointerId !== activePointerId) return;
         cancelStreetViewMode();
     });
 
