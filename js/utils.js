@@ -5,7 +5,7 @@ var usuarioSolicitoEntrar = Boolean(estadoBootstrap && estadoBootstrap.userReque
 function cerrarPortadaReal() {
                 var modal = document.getElementById('welcome-modal');
                 if(modal) { modal.style.opacity = '0'; setTimeout(function() { modal.style.display = 'none'; }, 400); }
-                mostrarInfoTitulo(30000, { mantenerAyuda: true });
+                mostrarInfoTitulo(esVistaMovil() ? 8000 : 30000, { mantenerAyuda: true });
             }
 
             function cerrarPortada() {
@@ -48,21 +48,48 @@ function cerrarPortadaReal() {
             var titleInfoTimer = null;
             var titleHintTimer = null;
 
-            function ocultarInfoTitulo() {
+            function esVistaMovil() {
+                return window.matchMedia('(max-width: 896px)').matches;
+            }
+
+            function actualizarBotonInfoTitulo(visible) {
+                var button = document.getElementById('btn-info-title');
+                var hint = document.getElementById('info-title-hint');
+                var accionOcultar = esVistaMovil() && visible;
+                if (button) {
+                    button.setAttribute('aria-expanded', visible ? 'true' : 'false');
+                    button.setAttribute('aria-label', accionOcultar ? 'Ocultar información del visor' : 'Mostrar información del visor');
+                    button.title = accionOcultar ? 'Ocultar información del visor' : 'Mostrar información del visor';
+                    button.classList.toggle('is-active', visible);
+                }
+                if (hint) {
+                    hint.textContent = accionOcultar ? 'Clic para ocultar información' : 'Clic para ver anexos';
+                }
+            }
+
+            function ocultarInfoTitulo(options) {
                 var anexos = document.getElementById('anexos-detalle');
-                if (anexos && anexos.open) {
+                var forzar = options && options.forzar;
+                if (anexos && anexos.open && !forzar) {
                     mostrarInfoTitulo(50000);
                     return;
                 }
                 var title = document.getElementById('title-container');
                 if (title) title.classList.add('title-hidden');
-                mostrarAyudaInfoTitulo(9000);
+                if (titleInfoTimer) window.clearTimeout(titleInfoTimer);
+                actualizarBotonInfoTitulo(false);
+                if (!options || options.mostrarAyuda !== false) {
+                    mostrarAyudaInfoTitulo(9000);
+                } else {
+                    ocultarAyudaInfoTitulo();
+                }
             }
 
             function mostrarInfoTitulo(duration, options) {
                 var title = document.getElementById('title-container');
                 if (!title) return;
                 title.classList.remove('title-hidden');
+                actualizarBotonInfoTitulo(true);
                 if (!options || !options.mantenerAyuda) {
                     ocultarAyudaInfoTitulo();
                 }
@@ -91,19 +118,28 @@ function cerrarPortadaReal() {
                 var anexos = document.getElementById('anexos-detalle');
                 if (button) {
                     button.addEventListener('click', function() {
-                        mostrarInfoTitulo(50000);
+                        var title = document.getElementById('title-container');
+                        var estaVisible = title && !title.classList.contains('title-hidden');
+                        if (esVistaMovil() && estaVisible) {
+                            if (anexos && anexos.open) anexos.open = false;
+                            ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
+                        } else {
+                            mostrarInfoTitulo(esVistaMovil() ? 0 : 50000);
+                        }
                     });
                 }
                 if (anexos) {
                     anexos.addEventListener('toggle', function() {
                         if (anexos.open) {
                             mostrarInfoTitulo(90000);
+                        } else if (esVistaMovil()) {
+                            ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
                         } else {
                             mostrarInfoTitulo(50000);
                         }
                     });
                 }
-                mostrarInfoTitulo(30000, { mantenerAyuda: true });
+                mostrarInfoTitulo(esVistaMovil() ? 8000 : 30000, { mantenerAyuda: true });
                 mostrarAyudaInfoTitulo(40000);
             }
 

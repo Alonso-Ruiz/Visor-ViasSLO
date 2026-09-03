@@ -47,7 +47,7 @@
         'layers/Lotes_Limatambo_2.js?v=20260811-limatambo-submanzanas',
         'layers/reastechadas_3.js?v=20260811-limatambo-submanzanas',
         'js/pdf-manifest.js?v=20260903-terre-tilde-labels',
-        'js/utils.js?v=20260903-bootstrap',
+        'js/utils.js?v=20260903-mobile-title',
         'styles/subsectores_1_style.js',
         'styles/Sectores_2_style.js',
         'styles/PlantasdeAlamedasypasajes_2_style.js',

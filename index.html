@@ -9,13 +9,13 @@
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mt1.google.com; connect-src 'self' https://mt1.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
         
         <link rel="stylesheet" href="vendor/openlayers/ol.css">
-        <link rel="stylesheet" href="css/main.css?v=20260903-performance">
+        <link rel="stylesheet" href="css/main.css?v=20260903-mobile-title">
         <link rel="preconnect" href="https://mt1.google.com" crossorigin>
         <link rel="dns-prefetch" href="//mt1.google.com">
         <link rel="preload" href="assets/escudo-portada.webp" as="image" type="image/webp" fetchpriority="high">
         <link rel="icon" type="image/png" href="Escudo_de_San_Borja.png">
         <link rel="apple-touch-icon" href="Escudo_de_San_Borja.png">
-        <script defer src="js/bootstrap.js?v=20260903-bootstrap"></script>
+        <script defer src="js/bootstrap.js?v=20260903-mobile-title"></script>
         <title>Sistema Vial - San Borja</title>
     </head>
     <body>
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <button id="btn-info-title" class="info-title-button" title="Mostrar información del visor" aria-label="Mostrar información del visor">i</button>
+        <button id="btn-info-title" class="info-title-button" title="Mostrar información del visor" aria-label="Mostrar información del visor" aria-expanded="true" aria-controls="title-container">i</button>
         <div id="info-title-hint" class="info-title-hint" aria-hidden="true">Clic para ver anexos</div>
         <button id="btn-streetview" class="streetview-button" title="Abrir Street View" aria-label="Abrir Street View">
             <img src="assets/pegman-trim.png" alt="">

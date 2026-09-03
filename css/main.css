@@ -1312,6 +1312,7 @@ body.streetview-targeting .ol-viewport {
     #title-container {
         padding: 12px 15px;
         border-left-width: 4px;
+        transition-duration: 0.25s;
     }
 
     #title-container h1 {
