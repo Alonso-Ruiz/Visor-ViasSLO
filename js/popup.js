@@ -345,7 +345,7 @@
                 crearFilaSegura(tabla, 'Tramo', tramoMostrar);
                 crearFilaSegura(tabla, 'Ancho Norm.', anchoMostrar);
                 if (String(codigoFinal || '').trim().toUpperCase() === 'VLP-JR-57H') {
-                    crearFilaSegura(tabla, 'Concejo', 'ACUERDO DE CONCEJO N° 053-2012-MSB-C');
+                    crearFilaSegura(tabla, 'Base legal', 'ACUERDO DE CONCEJO N° 053-2012-MSB-C');
                 }
                 content.appendChild(tabla);
 
