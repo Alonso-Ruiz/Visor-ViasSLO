@@ -63,7 +63,7 @@ function cerrarPortadaReal() {
                     button.classList.toggle('is-active', visible);
                 }
                 if (hint) {
-                    hint.textContent = accionOcultar ? 'Clic para ocultar información' : 'Clic para ver anexos';
+                    hint.textContent = accionOcultar ? 'Clic para ocultar' : 'Clic para ver anexos';
                 }
             }
 
