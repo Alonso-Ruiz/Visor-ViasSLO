@@ -10,39 +10,50 @@
         var satSource = new ol.source.XYZ({ url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', maxZoom: 22, attributions: '© Google' });
         var googleSat = new ol.layer.Tile({ source: satSource, zIndex: 0 });
 
-        function crearEstilo(color, width, dash, includeText, feature) {
-            var stroke = new ol.style.Stroke({ 
-                color: color, 
-                width: width, 
-                lineDash: dash,
+        function crearFuncionEstiloVia(color, width, zoomEtiquetas) {
+            var stroke = new ol.style.Stroke({
+                color: color,
+                width: width,
                 lineCap: 'round',
                 lineJoin: 'round'
             });
-            var style = new ol.style.Style({ stroke: stroke });
-            var labelText = feature.get('_fixedName');
+            var estiloSinEtiqueta = new ol.style.Style({ stroke: stroke });
+            var estilosPorNombre = Object.create(null);
 
-            if (includeText && labelText && labelText !== '-') {
-                style.setText(new ol.style.Text({
-                    text: labelText, placement: 'line', font: 'bold 11.5px "Segoe UI", Arial, sans-serif',
-                    fill: new ol.style.Fill({ color: '#ffffff' }), stroke: new ol.style.Stroke({ color: '#333333', width: 2.5 }),
-                    overflow: false, maxAngle: Math.PI / 8, offsetY: -5
-                }));
-            }
-            return style;
+            return function(feature, resolution) {
+                var z = map.getView().getZoomForResolution(resolution);
+                var labelText = feature.get('_fixedName');
+                if (z < zoomEtiquetas || !labelText || labelText === '-') return estiloSinEtiqueta;
+
+                if (!estilosPorNombre[labelText]) {
+                    estilosPorNombre[labelText] = new ol.style.Style({
+                        stroke: stroke,
+                        text: new ol.style.Text({
+                            text: labelText, placement: 'line', font: 'bold 11.5px "Segoe UI", Arial, sans-serif',
+                            fill: new ol.style.Fill({ color: '#ffffff' }), stroke: new ol.style.Stroke({ color: '#333333', width: 2.5 }),
+                            overflow: false, maxAngle: Math.PI / 8, offsetY: -5
+                        })
+                    });
+                }
+                return estilosPorNombre[labelText];
+            };
         }
 
         var style_limite = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#1a1a1a', width: 4.5, lineDash: [12, 10], lineCap: 'round', lineJoin: 'round' }) });
-        function styleMetroArterialFn(feature, resolution) { var z = map.getView().getZoomForResolution(resolution); return crearEstilo('#00a651', 4, null, (z >= 14), feature); }
-        function styleMetroColectoraFn(feature, resolution) { var z = map.getView().getZoomForResolution(resolution); return crearEstilo('#ffd400', 4, null, (z >= 14), feature); }
+        var styleMetroArterialFn = crearFuncionEstiloVia('#00a651', 4, 14);
+        var styleMetroColectoraFn = crearFuncionEstiloVia('#ffd400', 4, 14);
+        var styleMetroExpresaBase = [
+            new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#111111', width: 6, lineCap: 'round', lineJoin: 'round' }) }),
+            new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#e60000', width: 3.5, lineCap: 'round', lineJoin: 'round' }) })
+        ];
+        var styleMetroExpresaPorNombre = Object.create(null);
         function styleMetroExpresaFn(feature, resolution) {
             var z = map.getView().getZoomForResolution(resolution);
-            var styles = [
-                new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#111111', width: 6, lineCap: 'round', lineJoin: 'round' }) }),
-                new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#e60000', width: 3.5, lineCap: 'round', lineJoin: 'round' }) })
-            ];
             var labelText = feature.get('_fixedName');
-            if (z >= 14 && labelText && labelText !== '-') {
-                styles.push(new ol.style.Style({
+            if (z < 14 || !labelText || labelText === '-') return styleMetroExpresaBase;
+
+            if (!styleMetroExpresaPorNombre[labelText]) {
+                styleMetroExpresaPorNombre[labelText] = styleMetroExpresaBase.concat(new ol.style.Style({
                     text: new ol.style.Text({
                         text: labelText,
                         placement: 'line',
@@ -55,31 +66,64 @@
                     })
                 }));
             }
-            return styles;
+            return styleMetroExpresaPorNombre[labelText];
         }
-        function stylePrefFn(feature, resolution) { var z = map.getView().getZoomForResolution(resolution); return crearEstilo('#8e0500', 4, null, (z >= 15), feature); }
-        
-        function styleSecVehFn(feature, resolution) { var z = map.getView().getZoomForResolution(resolution); return crearEstilo('#fb8c00', 2.5, null, (z >= 15), feature); }
-        function styleSecResFn(feature, resolution) { var z = map.getView().getZoomForResolution(resolution); return crearEstilo('#f57c00', 2, null, (z >= 15), feature); }
-        function styleSecPasFn(feature, resolution) { var z = map.getView().getZoomForResolution(resolution); return crearEstilo('#ef6c00', 1.8, null, (z >= 15), feature); }
-        function styleSecAlaFn(feature, resolution) { var z = map.getView().getZoomForResolution(resolution); return crearEstilo('#e65100', 1.8, null, (z >= 15), feature); }
-        
+        var stylePrefFn = crearFuncionEstiloVia('#8e0500', 4, 15);
+
+        var styleSecVehFn = crearFuncionEstiloVia('#fb8c00', 2.5, 15);
+        var styleSecResFn = crearFuncionEstiloVia('#f57c00', 2, 15);
+        var styleSecPasFn = crearFuncionEstiloVia('#ef6c00', 1.8, 15);
+        var styleSecAlaFn = crearFuncionEstiloVia('#e65100', 1.8, 15);
+
+        var estilosSeccionesPorCodigo = Object.create(null);
         function styleSeccionesFn(feature, resolution) {
             var z = map.getView().getZoomForResolution(resolution);
             if (z < 16) return null; 
             var p = feature.getProperties();
             var codigo = getProp(p, 'CODIGO', 'C\u00d3DIGO') || "-";
-            return new ol.style.Style({
-                stroke: new ol.style.Stroke({ color: '#00975D', width: 4.5, lineDash: [8, 8], lineCap: 'round', lineJoin: 'round' }),
-                text: new ol.style.Text({
-                    text: codigo, placement: 'line', font: 'bold 12px "Segoe UI", Arial, sans-serif',
-                    fill: new ol.style.Fill({ color: '#ffffff' }), stroke: new ol.style.Stroke({ color: '#00975D', width: 3.5 }), 
-                    overflow: false, maxAngle: Math.PI / 8, offsetY: -10
-                })
-            });
+            if (!estilosSeccionesPorCodigo[codigo]) {
+                estilosSeccionesPorCodigo[codigo] = new ol.style.Style({
+                    stroke: new ol.style.Stroke({ color: '#00975D', width: 4.5, lineDash: [8, 8], lineCap: 'round', lineJoin: 'round' }),
+                    text: new ol.style.Text({
+                        text: codigo, placement: 'line', font: 'bold 12px "Segoe UI", Arial, sans-serif',
+                        fill: new ol.style.Fill({ color: '#ffffff' }), stroke: new ol.style.Stroke({ color: '#00975D', width: 3.5 }),
+                        overflow: false, maxAngle: Math.PI / 8, offsetY: -10
+                    })
+                });
+            }
+            return estilosSeccionesPorCodigo[codigo];
         }
 
-        function styleHighlightFn() { return new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#00ffff', width: 8, lineCap: 'round', lineJoin: 'round' }) }); }
+        var styleHighlight = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#00ffff', width: 8, lineCap: 'round', lineJoin: 'round' }) });
+        function styleHighlightFn() { return styleHighlight; }
+
+        function cachearEstiloQgis(styleFn, obtenerClave) {
+            if (typeof styleFn !== 'function') return styleFn;
+            var cache = Object.create(null);
+            return function(feature, resolution) {
+                var clave = obtenerClave ? String(obtenerClave(feature) || '') : 'default';
+                if (!Object.prototype.hasOwnProperty.call(cache, clave)) {
+                    cache[clave] = styleFn(feature, resolution);
+                }
+                return cache[clave];
+            };
+        }
+
+        style_Sectores_2 = cachearEstiloQgis(style_Sectores_2, function(f) { return f.get('Sectores'); });
+        style_Sectores_2_label = cachearEstiloQgis(style_Sectores_2_label, function(f) { return f.get('Sectores'); });
+        style_subsectores_1 = cachearEstiloQgis(style_subsectores_1, function(f) { return f.get('RefName'); });
+        style_subsectores_1_label = cachearEstiloQgis(style_subsectores_1_label, function(f) { return f.get('RefName'); });
+        style_PlantasdeAlamedasypasajes_2 = cachearEstiloQgis(style_PlantasdeAlamedasypasajes_2, function(f) { return f.get('Tipo'); });
+        style_PlantasdevasenLimatambo_0 = cachearEstiloQgis(style_PlantasdevasenLimatambo_0, function(f) { return f.get('Categoría'); });
+        style_Lotes_0 = cachearEstiloQgis(style_Lotes_0);
+        style_EPI_TorresdeSanBorja_2 = cachearEstiloQgis(style_EPI_TorresdeSanBorja_2);
+        style_ALAMEDASDESUBMANZANAS_3 = cachearEstiloQgis(style_ALAMEDASDESUBMANZANAS_3);
+        style_BORDEDESUBMANZANAYREALIBRE_7 = cachearEstiloQgis(style_BORDEDESUBMANZANAYREALIBRE_7);
+        style_SUBMANZANAS_1 = cachearEstiloQgis(style_SUBMANZANAS_1);
+        style_AREASLIBRESDESUBMANZANAS_0 = cachearEstiloQgis(style_AREASLIBRESDESUBMANZANAS_0);
+        style_Manzanas_Limatambo_1 = cachearEstiloQgis(style_Manzanas_Limatambo_1);
+        style_Lotes_Limatambo_2 = cachearEstiloQgis(style_Lotes_Limatambo_2);
+        style_reastechadas_3 = cachearEstiloQgis(style_reastechadas_3);
 
         // =========================================================
         // 3. CAPAS VECTORIALES
@@ -150,10 +194,12 @@
         var layerSecPasaje = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsSecPasaje }), style: styleSecPasFn, zIndex: 5, declutter: true });
         var layerSecAlameda = new ol.layer.Vector({ source: new ol.source.Vector({ features: featsSecAlameda }), style: styleSecAlaFn, zIndex: 5, declutter: true });
         var layerSecciones = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSecciones) }), style: styleSeccionesFn, zIndex: 8, declutter: true });
-        var layerSectores = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSectores) }), style: style_Sectores_2, zIndex: 2, declutter: true });
-        var layerSubsectores = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSubsectores) }), style: style_subsectores_1, zIndex: 3, declutter: true });
-        var layerSectoresLabels = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSectores) }), style: style_Sectores_2_label, zIndex: 11 });
-        var layerSubsectoresLabels = new ol.layer.Vector({ source: new ol.source.Vector({ features: leerFeatures(datosSubsectores) }), style: style_subsectores_1_label, zIndex: 11 });
+        var sourceSectores = new ol.source.Vector({ features: leerFeatures(datosSectores) });
+        var sourceSubsectores = new ol.source.Vector({ features: leerFeatures(datosSubsectores) });
+        var layerSectores = new ol.layer.Vector({ source: sourceSectores, style: style_Sectores_2, zIndex: 2, declutter: true });
+        var layerSubsectores = new ol.layer.Vector({ source: sourceSubsectores, style: style_subsectores_1, zIndex: 3, declutter: true });
+        var layerSectoresLabels = new ol.layer.Vector({ source: sourceSectores, style: style_Sectores_2_label, zIndex: 11 });
+        var layerSubsectoresLabels = new ol.layer.Vector({ source: sourceSubsectores, style: style_subsectores_1_label, zIndex: 11 });
 
         var featsTorresAlameda = [];
         var featsTorresPasaje = [];

@@ -58,27 +58,43 @@
             });
         }
         
-        indexarOLFeatures(layerMetroArterial.getSource().getFeatures(), true, 'arterial');
-        indexarOLFeatures(layerMetroColectora.getSource().getFeatures(), true, 'colectora');
-        indexarOLFeatures(layerMetroExpresa.getSource().getFeatures(), true, 'expresa');
-        indexarOLFeatures(layerPrefAvenida.getSource().getFeatures(), false);
-        indexarOLFeatures(layerPrefCalle.getSource().getFeatures(), false);
-        indexarOLFeatures(layerPrefJiron.getSource().getFeatures(), false);
-        indexarOLFeatures(layerPrefPasaje.getSource().getFeatures(), false);
-        indexarOLFeatures(layerSecVehicular.getSource().getFeatures(), false);
-        indexarOLFeatures(layerSecRestringido.getSource().getFeatures(), false);
-        indexarOLFeatures(layerSecPasaje.getSource().getFeatures(), false);
-        indexarOLFeatures(layerSecAlameda.getSource().getFeatures(), false);
-        indexarOLFeatures(layerJuanXXIIIAlameda.getSource().getFeatures(), false);
-        indexarOLFeatures(layerLimatamboAlameda.getSource().getFeatures(), false);
-        indexarOLFeatures(layerLimatamboCalle.getSource().getFeatures(), false);
-        indexarOLFeatures(layerLimatamboJiron.getSource().getFeatures(), false);
-        indexarOLFeatures(layerLimatamboPasaje.getSource().getFeatures(), false);
-        indexarOLFeatures(layerLimatamboServidumbre.getSource().getFeatures(), false);
-        indexarOLFeatures(layerLimatamboSubmanzana.getSource().getFeatures(), false);
-        
-        dictVias = Object.values(mapClasif);
-        dictVias.sort((a,b) => a.nombre.localeCompare(b.nombre));
+        var indiceViasConstruido = false;
+        var solicitudIndiceVias = null;
+
+        function construirIndiceVias() {
+            if (indiceViasConstruido) return;
+            indiceViasConstruido = true;
+
+            indexarOLFeatures(layerMetroArterial.getSource().getFeatures(), true, 'arterial');
+            indexarOLFeatures(layerMetroColectora.getSource().getFeatures(), true, 'colectora');
+            indexarOLFeatures(layerMetroExpresa.getSource().getFeatures(), true, 'expresa');
+            indexarOLFeatures(layerPrefAvenida.getSource().getFeatures(), false);
+            indexarOLFeatures(layerPrefCalle.getSource().getFeatures(), false);
+            indexarOLFeatures(layerPrefJiron.getSource().getFeatures(), false);
+            indexarOLFeatures(layerPrefPasaje.getSource().getFeatures(), false);
+            indexarOLFeatures(layerSecVehicular.getSource().getFeatures(), false);
+            indexarOLFeatures(layerSecRestringido.getSource().getFeatures(), false);
+            indexarOLFeatures(layerSecPasaje.getSource().getFeatures(), false);
+            indexarOLFeatures(layerSecAlameda.getSource().getFeatures(), false);
+            indexarOLFeatures(layerJuanXXIIIAlameda.getSource().getFeatures(), false);
+            indexarOLFeatures(layerLimatamboAlameda.getSource().getFeatures(), false);
+            indexarOLFeatures(layerLimatamboCalle.getSource().getFeatures(), false);
+            indexarOLFeatures(layerLimatamboJiron.getSource().getFeatures(), false);
+            indexarOLFeatures(layerLimatamboPasaje.getSource().getFeatures(), false);
+            indexarOLFeatures(layerLimatamboServidumbre.getSource().getFeatures(), false);
+            indexarOLFeatures(layerLimatamboSubmanzana.getSource().getFeatures(), false);
+
+            dictVias = Object.values(mapClasif);
+            dictVias.sort(function(a, b) { return a.nombre.localeCompare(b.nombre); });
+        }
+
+        function asegurarIndiceVias() {
+            if (solicitudIndiceVias !== null && 'cancelIdleCallback' in window) {
+                window.cancelIdleCallback(solicitudIndiceVias);
+                solicitudIndiceVias = null;
+            }
+            construirIndiceVias();
+        }
 
         // FIX DEFINITIVO DEL POPUP: Saca el contenedor de OpenLayers por encima del panel
         var fixZindex = document.createElement('style');
@@ -90,7 +106,8 @@
         var indiceSeleccionado = -1; 
 
         inputBuscador.addEventListener('input', function() {
-            indiceSeleccionado = -1; 
+            asegurarIndiceVias();
+            indiceSeleccionado = -1;
             var safeValue = this.value.replace(/[<>"'`´=;()]/g, ""); 
             var inputVal = quitarTildes(safeValue);
 
@@ -134,6 +151,12 @@
             }
             resDiv.style.display = 'block';
         });
+
+        if ('requestIdleCallback' in window) {
+            solicitudIndiceVias = window.requestIdleCallback(construirIndiceVias, { timeout: 1500 });
+        } else {
+            solicitudIndiceVias = window.setTimeout(construirIndiceVias, 250);
+        }
 
         // =========================================================
         // NAVEGACIÓN CON TECLADO (FLECHAS Y ENTER)

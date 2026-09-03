@@ -8,6 +8,12 @@
 
         map.addControl(new ol.control.Zoom());
 
+        map.once('rendercomplete', function() {
+            requestAnimationFrame(function() {
+                requestAnimationFrame(marcarVisorListo);
+            });
+        });
+
         var northArrowEl = document.createElement('div');
         northArrowEl.className = 'north-arrow-ctrl ol-unselectable ol-control';
         northArrowEl.title = 'Orientar al Norte';

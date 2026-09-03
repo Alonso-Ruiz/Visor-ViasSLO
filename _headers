@@ -1,0 +1,29 @@
+/
+  Cache-Control: no-cache, must-revalidate
+
+/index.html
+  Cache-Control: no-cache, must-revalidate
+
+/css/*
+  Cache-Control: public, max-age=604800
+
+/js/*
+  Cache-Control: public, max-age=604800
+
+/layers/*
+  Cache-Control: public, max-age=604800
+
+/styles/*
+  Cache-Control: public, max-age=604800
+
+/vendor/*
+  Cache-Control: public, max-age=2592000
+
+/assets/*
+  Cache-Control: public, max-age=2592000
+
+/pdf/*
+  Cache-Control: public, max-age=604800
+
+/anexos/*
+  Cache-Control: public, max-age=604800

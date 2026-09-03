@@ -9,7 +9,8 @@
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mt1.google.com; connect-src 'self' https://mt1.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
         
         <link rel="stylesheet" href="vendor/openlayers/ol.css">
-        <link rel="stylesheet" href="css/main.css?v=20260902-opacity-compact">
+        <link rel="stylesheet" href="css/main.css?v=20260903-performance">
+        <link rel="preload" href="assets/escudo-portada.webp" as="image" type="image/webp" fetchpriority="high">
         <link rel="icon" type="image/png" href="Escudo_de_San_Borja.png">
         <link rel="apple-touch-icon" href="Escudo_de_San_Borja.png">
         <title>Sistema Vial - San Borja</title>
@@ -79,7 +80,7 @@
             <div class="modal-content">
                 <span id="btn-cerrar-portada" class="close-modal-icon" title="Cerrar">&#10005;</span>
                 
-                <img class="modal-logo" src="Escudo_de_San_Borja.png" alt="Escudo de San Borja">
+                <img class="modal-logo" src="assets/escudo-portada.webp" width="240" height="269" fetchpriority="high" decoding="async" alt="Escudo de San Borja">
                 <h2>Municipalidad de San Borja</h2>
                 <h3>VISOR DE LA ORDENANZA N° XXXX-2026-MSB QUE ESTABLECE LA CLASIFICACIÓN DE LAS VÍAS LOCALES Y APRUEBA LAS SECCIONES VIALES EN EL DISTRITO DE SAN BORJA</h3>
                 <p>Este visor permite consultar de forma interactiva la clasificación de las vías y las secciones viales normativas del distrito.</p>
@@ -388,7 +389,7 @@
         <script src="layers/Lotes_Limatambo_2.js?v=20260811-limatambo-submanzanas"></script>
         <script src="layers/reastechadas_3.js?v=20260811-limatambo-submanzanas"></script>
         <script src="js/pdf-manifest.js?v=20260903-terre-tilde-labels"></script>
-        <script src="js/utils.js?v=20260813-torres-poligonos"></script>
+        <script src="js/utils.js?v=20260903-performance"></script>
         <script src="styles/subsectores_1_style.js"></script>
         <script src="styles/Sectores_2_style.js"></script>
         <script src="styles/PlantasdeAlamedasypasajes_2_style.js"></script>
@@ -402,11 +403,11 @@
         <script src="styles/Manzanas_Limatambo_1_style.js?v=20260811-limatambo-submanzanas"></script>
         <script src="styles/Lotes_Limatambo_2_style.js?v=20260811-lotes-rayado"></script>
         <script src="styles/reastechadas_3_style.js?v=20260811-limatambo-submanzanas"></script>
-        <script src="js/layers.js?v=20260819-pref-subsecciones"></script>
-        <script src="js/map.js?v=20260903-ctrl-multiselect"></script>
+        <script src="js/layers.js?v=20260903-performance"></script>
+        <script src="js/map.js?v=20260903-performance"></script>
         <script src="js/streetview.js?v=20260902-mobile-drag"></script>
         <script src="js/popup.js?v=20260903-concejo-bosque"></script>
-        <script src="js/search.js?v=20260819-pref-subsecciones"></script>
+        <script src="js/search.js?v=20260903-performance"></script>
         <script src="js/app.js?v=20260812-info-anexos"></script>
     </body>
 </html>

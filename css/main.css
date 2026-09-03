@@ -647,6 +647,18 @@ body.streetview-targeting .ol-viewport {
     background-color: #007a4b;
 }
 
+.btn-ingresar.is-preparing {
+    cursor: wait;
+    opacity: 0.85;
+}
+
+@media (max-width: 896px) {
+    #welcome-modal {
+        /* El desenfoque de un mapa completo es costoso en GPU móviles. */
+        backdrop-filter: none;
+    }
+}
+
 .source {
     font-size: 11px;
     color: #999;

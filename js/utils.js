@@ -1,7 +1,39 @@
-function cerrarPortada() {
+var visorListo = false;
+var usuarioSolicitoEntrar = false;
+
+function cerrarPortadaReal() {
                 var modal = document.getElementById('welcome-modal');
                 if(modal) { modal.style.opacity = '0'; setTimeout(function() { modal.style.display = 'none'; }, 400); }
                 mostrarInfoTitulo(30000, { mantenerAyuda: true });
+            }
+
+            function cerrarPortada() {
+                if (!visorListo) {
+                    usuarioSolicitoEntrar = true;
+                    var modal = document.getElementById('welcome-modal');
+                    var boton = document.getElementById('btn-ingresar-visor');
+                    if (modal) modal.setAttribute('aria-busy', 'true');
+                    if (boton) {
+                        boton.textContent = 'Preparando visor…';
+                        boton.classList.add('is-preparing');
+                    }
+                    return;
+                }
+                cerrarPortadaReal();
+            }
+
+            function marcarVisorListo() {
+                if (visorListo) return;
+                visorListo = true;
+                document.documentElement.setAttribute('data-visor-ready-ms', String(Math.round(performance.now())));
+                var modal = document.getElementById('welcome-modal');
+                var boton = document.getElementById('btn-ingresar-visor');
+                if (modal) modal.setAttribute('aria-busy', 'false');
+                if (boton) {
+                    boton.textContent = 'Ingresar al visor';
+                    boton.classList.remove('is-preparing');
+                }
+                if (usuarioSolicitoEntrar) cerrarPortadaReal();
             }
             function toggleDef(id) {
                 var el = document.getElementById(id);
