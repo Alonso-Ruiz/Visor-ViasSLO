@@ -28,7 +28,16 @@
             document.getElementById('compass-icon').style.transform = 'rotate(' + rotation + 'rad)';
         });
 
+        var ctrlSelectedFeatures = [];
+        var ctrlMultiLayers = [
+            layerMetroArterial, layerMetroColectora, layerMetroExpresa,
+            layerPrefAvenida, layerPrefCalle, layerPrefJiron, layerPrefPasaje,
+            layerSecVehicular, layerSecRestringido, layerSecPasaje, layerSecAlameda
+        ];
 
+        function isCtrlMultiLayer(layer) {
+            return ctrlMultiLayers.indexOf(layer) !== -1;
+        }
 
         map.on('singleclick', function(evt) {
             if (document.body.classList.contains('streetview-targeting')) return;
@@ -38,6 +47,26 @@
                 clickedLayer = l;
                 return f;
             }, { hitTolerance: 10 }); 
+
+            var originalEvent = evt.originalEvent || {};
+            if ((originalEvent.ctrlKey || originalEvent.metaKey) && feature && isCtrlMultiLayer(clickedLayer)) {
+                var selectedIndex = ctrlSelectedFeatures.indexOf(feature);
+                if (selectedIndex === -1) {
+                    ctrlSelectedFeatures.push(feature);
+                } else {
+                    ctrlSelectedFeatures.splice(selectedIndex, 1);
+                }
+
+                if (ctrlSelectedFeatures.length > 0) {
+                    mostrarPopupFeature(ctrlSelectedFeatures[0], evt.coordinate, ctrlSelectedFeatures);
+                } else {
+                    overlay.setPosition(undefined);
+                    sourceHighlight.clear();
+                }
+                return;
+            }
+
+            ctrlSelectedFeatures = [];
             
             if (feature && (clickedLayer === layerSectores || clickedLayer === layerSectoresLabels)) {
                 mostrarPopupSector(feature, evt.coordinate, 'sector');
@@ -110,6 +139,7 @@
             });
 
             dragBox.on('boxstart', function() {
+                ctrlSelectedFeatures = [];
                 sourceHighlight.clear();
                 overlay.setPosition(undefined);
             });
