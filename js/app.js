@@ -23,6 +23,17 @@ function iniciarAplicacion() {
     inicializarEventosInterfaz();
     inicializarInfoTitulo();
     actualizarVisibilidadCapas();
+
+    if (window.__visorBootstrap) {
+        window.__visorBootstrap.appReady = true;
+        if (typeof window.__visorBootstrap.releaseEarlyHandlers === 'function') {
+            window.__visorBootstrap.releaseEarlyHandlers();
+        }
+        if (window.__visorBootstrap.userRequestedEntry) {
+            usuarioSolicitoEntrar = true;
+            cerrarPortada();
+        }
+    }
 }
 
 if (document.readyState === 'loading') {

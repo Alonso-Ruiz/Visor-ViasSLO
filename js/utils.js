@@ -1,5 +1,6 @@
-var visorListo = false;
-var usuarioSolicitoEntrar = false;
+var estadoBootstrap = window.__visorBootstrap || null;
+var visorListo = Boolean(estadoBootstrap && estadoBootstrap.mapReady);
+var usuarioSolicitoEntrar = Boolean(estadoBootstrap && estadoBootstrap.userRequestedEntry);
 
 function cerrarPortadaReal() {
                 var modal = document.getElementById('welcome-modal');
@@ -25,6 +26,10 @@ function cerrarPortadaReal() {
             function marcarVisorListo() {
                 if (visorListo) return;
                 visorListo = true;
+                if (estadoBootstrap) {
+                    estadoBootstrap.mapReady = true;
+                    usuarioSolicitoEntrar = usuarioSolicitoEntrar || estadoBootstrap.userRequestedEntry;
+                }
                 document.documentElement.setAttribute('data-visor-ready-ms', String(Math.round(performance.now())));
                 var modal = document.getElementById('welcome-modal');
                 var boton = document.getElementById('btn-ingresar-visor');
