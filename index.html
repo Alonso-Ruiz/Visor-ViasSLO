@@ -9,18 +9,50 @@
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mt1.google.com; connect-src 'self' https://mt1.google.com; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
         
         <link rel="stylesheet" href="vendor/openlayers/ol.css">
-        <link rel="stylesheet" href="css/main.css?v=20260903-mobile-title">
+        <style>
+            body:not(.visor-entered) #desktop-header,
+            body:not(.visor-entered) #left-panel,
+            body:not(.visor-entered) #btn-abrir-panel,
+            body:not(.visor-entered) #mobile-toolbar,
+            body:not(.visor-entered) #desktop-toolbar,
+            body:not(.visor-entered) #panel-usos,
+            body:not(.visor-entered) .north-arrow-ctrl,
+            body:not(.visor-entered) .ol-zoom,
+            body:not(.visor-entered) .ol-scale-line {
+                visibility: hidden !important;
+                opacity: 0 !important;
+            }
+        </style>
+        <link rel="stylesheet" href="css/main.css?v=20260918-search-modal-fix">
         <link rel="preconnect" href="https://mt1.google.com" crossorigin>
         <link rel="dns-prefetch" href="//mt1.google.com">
         <link rel="preload" href="assets/escudo-portada.webp" as="image" type="image/webp" fetchpriority="high">
+        <link rel="preload" href="assets/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
         <link rel="icon" type="image/png" href="Escudo_de_San_Borja.png">
         <link rel="apple-touch-icon" href="Escudo_de_San_Borja.png">
-        <script defer src="js/bootstrap.js?v=20260903-mobile-title"></script>
+        <script defer src="js/bootstrap.js?v=20260918-fontawesome-final"></script>
         <title>Sistema Vial - San Borja</title>
     </head>
     <body>
+        <header id="desktop-header">
+            <div class="desktop-brand">
+                <img src="Escudo_de_San_Borja.png" alt="Escudo de la Municipalidad de San Borja">
+                <strong>Municipalidad<br>de San Borja</strong>
+            </div>
+            <div class="desktop-header-copy">
+                <strong>ORDENANZA QUE ESTABLECE LA CLASIFICACIÓN DE LAS VÍAS LOCALES Y APRUEBA LAS SECCIONES VIALES EN EL DISTRITO</strong>
+                <span>VISOR DE CLASIFICACIÓN DE VÍAS Y SUS SECCIONES</span>
+            </div>
+        </header>
         <div id="left-panel">
             <div id="title-container">
+                <div class="mobile-anexos-header">
+                    <div>
+                        <h4>ANEXOS</h4>
+                        <p>Documentos oficiales del visor</p>
+                    </div>
+                    <button type="button" id="btn-cerrar-anexos-mobile" aria-label="Cerrar anexos">&#10005;</button>
+                </div>
                 <h1>Municipalidad de San Borja</h1>
                 <h2>Ordenanza que establece la clasificación de las vías locales y aprueba las secciones viales en el distrito</h2>
                 <h3>Visor de Clasificación de vias y sus secciones</h3>
@@ -28,28 +60,30 @@
                     <summary class="btn-ver-anexos">VER ANEXOS</summary>
                     <div id="anexos-container" class="anexos-container">
                         <ul class="anexos-lista">
-                            <li><a href="anexos/ORDENANZA QUE ESTABLECE LA CLASIFICACIÓN DE LAS VÍAS LOCALES Y APRUEBA LAS SECCIONES VIALES EN EL DISTRITO DE SAN BORJA.pdf" target="_blank" rel="noopener noreferrer">Publicación Oficial de Ordenanza N° XXXX-2026-MSB</a></li>
-                            <li><a href="anexos/Anexo%201.%20Plano%20de%20clasificaci%C3%B3n%20de%20v%C3%ADas%20locales.pdf" target="_blank" rel="noopener noreferrer">Anexo 1: Plano de clasificación de vías locales.</a></li>
-                            <li><a href="anexos/Anexo%202.%20Plano%20de%20categor%C3%ADa%20de%20v%C3%ADas%20locales%20preferenciales.pdf" target="_blank" rel="noopener noreferrer">Anexo 2: Plano de categoría de vías locales preferenciales.</a></li>
-                            <li><a href="anexos/Anexo%203.%20Plano%20de%20subclasificaci%C3%B3n%20de%20v%C3%ADas%20locales%20secundarias.pdf" target="_blank" rel="noopener noreferrer">Anexo 3: Plano de subclasificación de vías locales secundarias.</a></li>
-                            <li><a href="anexos/Anexo%204.%20Plano%20de%20categor%C3%ADas%20de%20v%C3%ADas%20locales%20secundarias%20destinadas%20al%20tr%C3%A1nsito%20vehicular.pdf" target="_blank" rel="noopener noreferrer">Anexo 4: Plano de categorías de vías locales secundarias destinadas al tránsito vehicular.</a></li>
-                            <li><a href="anexos/Anexo%205.%20Plano%20de%20categor%C3%ADas%20de%20v%C3%ADas%20locales%20secundarias%20con%20restricci%C3%B3n%20vehicular.pdf" target="_blank" rel="noopener noreferrer">Anexo 5: Plano de categorías de vías locales secundarias con restricción vehicular.</a></li>
-                            <li><a href="anexos/Anexo%206.%20Plano%20de%20secciones%20viales%20normativas.pdf" target="_blank" rel="noopener noreferrer">Anexo 6: Plano de secciones viales normativas.</a></li>
-                            <li><a href="anexos/Anexo%207.%20C%C3%B3digos%20de%20secciones%20viales%20normativas%20de%20las%20v%C3%ADas%20locales%20preferenciales.pdf" target="_blank" rel="noopener noreferrer">Anexo 7: Códigos de secciones viales normativas de las vías locales preferenciales.</a></li>
-                            <li><a href="anexos/Anexo%208.%20C%C3%B3digos%20de%20secciones%20viales%20normativas%20de%20las%20v%C3%ADas%20locales%20secundarias.pdf" target="_blank" rel="noopener noreferrer">Anexo 8: Códigos de secciones viales normativas de las vías locales secundarias.</a></li>
-                            <li>Anexo 9: Desarrollo de Secciones Viales Normativas.</li>
-                            <li><a href="anexos/Anexo%2010.%20Plano%20general%20de%20planta%20de%20alamedas%20y%20pasajes%20de%20trazado%20no%20lineal%20en%20Torres%20de%20San%20Borja.pdf" target="_blank" rel="noopener noreferrer">Anexo 10: Plano general de planta de alamedas y pasajes de trazado no lineal en Torres de San Borja.</a></li>
-                            <li><a href="anexos/Anexo%2011.%20Desarrollo%20de%20plantas%20de%20alamedas%20y%20pasajes%20de%20trazado%20en%20Torres%20de%20San%20Borja.pdf" target="_blank" rel="noopener noreferrer">Anexo 11: Desarrollo de plantas de alamedas y pasajes de trazado no lineal en Torres de San Borja.</a></li>
-                            <li><a href="anexos/Anexo%2012.%20Plano%20general%20de%20alamedas%20de%20trazado%20no%20lineal%20en%20Papa%20Juan%20XXIII.pdf" target="_blank" rel="noopener noreferrer">Anexo 12: Plano general de alamedas de trazado no lineal en Papa Juan XXIII.</a></li>
-                            <li><a href="anexos/Anexo%2013.%20Desarrollo%20de%20plantas%20de%20alamedas%20de%20trazado%20no%20lineal%20en%20Papa%20Juan%20XXIII.pdf" target="_blank" rel="noopener noreferrer">Anexo 13: Desarrollo de plantas de alamedas de trazado no lineal en Papa Juan XXIII.</a></li>
-                            <li><a href="anexos/Anexo 14. Plano general de plantas de vías de trazado no lineal en Torres de Limatambo.pdf" target="_blank" rel="noopener noreferrer">Anexo 14: Plano general de plantas de vías de trazado no lineal en Torres de Limatambo.</a></li>
-                            <li><a href="anexos/Anexo 15. Desarrollo de plantas de vías de trazado no lineal en Torres de Limatambo.pdf" target="_blank" rel="noopener noreferrer">Anexo 15: Desarrollo de plantas de vías de trazado no lineal en Torres de Limatambo.</a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/ORDENANZA QUE ESTABLECE LA CLASIFICACIÓN DE LAS VÍAS LOCALES Y APRUEBA LAS SECCIONES VIALES EN EL DISTRITO DE SAN BORJA.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Ordenanza N° XXXX-2026-MSB</span><span class="anexo-descripcion">Publicación oficial de la ordenanza que establece la clasificación de las vías locales y aprueba las secciones viales en el distrito de San Borja.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%201.%20Plano%20de%20clasificaci%C3%B3n%20de%20v%C3%ADas%20locales.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 01</span><span class="anexo-descripcion">Plano de clasificación de vías locales.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%202.%20Plano%20de%20categor%C3%ADa%20de%20v%C3%ADas%20locales%20preferenciales.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 02</span><span class="anexo-descripcion">Plano de categoría de vías locales preferenciales.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%203.%20Plano%20de%20subclasificaci%C3%B3n%20de%20v%C3%ADas%20locales%20secundarias.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 03</span><span class="anexo-descripcion">Plano de subclasificación de vías locales secundarias.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%204.%20Plano%20de%20categor%C3%ADas%20de%20v%C3%ADas%20locales%20secundarias%20destinadas%20al%20tr%C3%A1nsito%20vehicular.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 04</span><span class="anexo-descripcion">Plano de categorías de vías locales secundarias destinadas al tránsito vehicular.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%205.%20Plano%20de%20categor%C3%ADas%20de%20v%C3%ADas%20locales%20secundarias%20con%20restricci%C3%B3n%20vehicular.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 05</span><span class="anexo-descripcion">Plano de categorías de vías locales secundarias con restricción vehicular.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%206.%20Plano%20de%20secciones%20viales%20normativas.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 06</span><span class="anexo-descripcion">Plano de secciones viales normativas.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%207.%20C%C3%B3digos%20de%20secciones%20viales%20normativas%20de%20las%20v%C3%ADas%20locales%20preferenciales.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 07</span><span class="anexo-descripcion">Códigos de secciones viales normativas de las vías locales preferenciales.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%208.%20C%C3%B3digos%20de%20secciones%20viales%20normativas%20de%20las%20v%C3%ADas%20locales%20secundarias.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 08</span><span class="anexo-descripcion">Códigos de secciones viales normativas de las vías locales secundarias.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><span class="anexo-entry"><span class="anexo-titulo">Anexo N° 09</span><span class="anexo-descripcion">Desarrollo de secciones viales normativas.</span></span></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%2010.%20Plano%20general%20de%20planta%20de%20alamedas%20y%20pasajes%20de%20trazado%20no%20lineal%20en%20Torres%20de%20San%20Borja.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 10</span><span class="anexo-descripcion">Plano general de planta de alamedas y pasajes de trazado no lineal en Torres de San Borja.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%2011.%20Desarrollo%20de%20plantas%20de%20alamedas%20y%20pasajes%20de%20trazado%20en%20Torres%20de%20San%20Borja.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 11</span><span class="anexo-descripcion">Desarrollo de plantas de alamedas y pasajes de trazado no lineal en Torres de San Borja.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%2012.%20Plano%20general%20de%20alamedas%20de%20trazado%20no%20lineal%20en%20Papa%20Juan%20XXIII.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 12</span><span class="anexo-descripcion">Plano general de alamedas de trazado no lineal en Papa Juan XXIII.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo%2013.%20Desarrollo%20de%20plantas%20de%20alamedas%20de%20trazado%20no%20lineal%20en%20Papa%20Juan%20XXIII.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 13</span><span class="anexo-descripcion">Desarrollo de plantas de alamedas de trazado no lineal en Papa Juan XXIII.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo 14. Plano general de plantas de vías de trazado no lineal en Torres de Limatambo.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 14</span><span class="anexo-descripcion">Plano general de plantas de vías de trazado no lineal en Torres de Limatambo.</span></a></li>
+                            <li><i class="fas fa-file-pdf anexo-pdf-icon" aria-hidden="true"></i><a href="anexos/Anexo 15. Desarrollo de plantas de vías de trazado no lineal en Torres de Limatambo.pdf" target="_blank" rel="noopener noreferrer"><span class="anexo-titulo">Anexo N° 15</span><span class="anexo-descripcion">Desarrollo de plantas de vías de trazado no lineal en Torres de Limatambo.</span></a></li>
                         </ul>
                     </div>
                 </details>
             </div>
             <div id="search-container">
-                <input type="text" id="buscador-vias" placeholder="🔍 Buscar vías metropolitanas o locales..." autocomplete="off">
+                <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                <input type="text" id="buscador-vias" placeholder="Buscar vía..." autocomplete="off" aria-label="Buscar vía">
+                <button type="button" id="btn-limpiar-busqueda" aria-label="Borrar búsqueda" title="Borrar búsqueda" aria-hidden="true" tabindex="-1">&#10005;</button>
                 <div id="lista-resultados"></div>
             </div>
         </div>
@@ -77,7 +111,36 @@
             <div id="popup-content"></div>
         </div>
 
-        <button id="btn-abrir-panel" title="Abrir Leyenda de Capas">☰</button>
+        <button id="btn-abrir-panel" title="Abrir leyenda y capas" aria-label="Abrir leyenda y capas" aria-expanded="false" aria-controls="panel-usos">
+            <span class="menu-lines" aria-hidden="true"></span>
+        </button>
+
+        <nav id="mobile-toolbar" aria-label="Herramientas del visor">
+            <button type="button" id="mobile-anexos" class="mobile-tool" aria-label="Ver información y anexos">
+                <i class="fas fa-info-circle" aria-hidden="true"></i>
+                <span>Anexos</span>
+            </button>
+            <button type="button" id="mobile-streetview" class="mobile-tool" aria-label="Activar Street View">
+                <svg class="streetview-person-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.8" r="2.6"></circle><path d="M9.4 8.4c.7-.6 1.6-.9 2.6-.9s1.9.3 2.6.9l1.7 2.2-1.7 1.6-1.1-1.2.5 3.1 1.5 6.8H8.5l1.5-6.8.5-3.1-1.1 1.2-1.7-1.6z"></path></svg>
+                <span>Street View</span>
+            </button>
+            <button type="button" id="mobile-opacity" class="mobile-tool" aria-label="Controlar transparencia">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="transparency-solid" d="M12 3a9 9 0 0 0 0 18z"></path><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18"></path></svg>
+                <span>Transparencia</span>
+            </button>
+        </nav>
+
+        <nav id="desktop-toolbar" aria-label="Herramientas del visor">
+            <button type="button" id="desktop-anexos" class="desktop-tool" aria-label="Ver anexos">
+                <i class="fas fa-info-circle" aria-hidden="true"></i><span>Anexos</span>
+            </button>
+            <button type="button" id="desktop-streetview" class="desktop-tool" aria-label="Activar Street View">
+                <svg class="streetview-person-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.8" r="2.6"></circle><path d="M9.4 8.4c.7-.6 1.6-.9 2.6-.9s1.9.3 2.6.9l1.7 2.2-1.7 1.6-1.1-1.2.5 3.1 1.5 6.8H8.5l1.5-6.8.5-3.1-1.1 1.2-1.7-1.6z"></path></svg><span>Street View</span>
+            </button>
+            <button type="button" id="desktop-opacity" class="desktop-tool" aria-label="Controlar transparencia">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="transparency-solid" d="M12 3a9 9 0 0 0 0 18z"></path><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18"></path></svg><span>Transparencia</span>
+            </button>
+        </nav>
 
         <div id="welcome-modal">
             <div class="modal-content">

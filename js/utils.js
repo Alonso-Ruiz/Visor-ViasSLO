@@ -4,8 +4,9 @@ var usuarioSolicitoEntrar = Boolean(estadoBootstrap && estadoBootstrap.userReque
 
 function cerrarPortadaReal() {
                 var modal = document.getElementById('welcome-modal');
+                document.body.classList.add('visor-entered');
                 if(modal) { modal.style.opacity = '0'; setTimeout(function() { modal.style.display = 'none'; }, 400); }
-                mostrarInfoTitulo(esVistaMovil() ? 8000 : 30000, { mantenerAyuda: true });
+                ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
             }
 
             function cerrarPortada() {
@@ -76,6 +77,8 @@ function cerrarPortadaReal() {
                 }
                 var title = document.getElementById('title-container');
                 if (title) title.classList.add('title-hidden');
+                document.body.classList.remove('mobile-anexos-open');
+                document.body.classList.remove('desktop-anexos-open');
                 if (titleInfoTimer) window.clearTimeout(titleInfoTimer);
                 actualizarBotonInfoTitulo(false);
                 if (!options || options.mostrarAyuda !== false) {
@@ -139,8 +142,7 @@ function cerrarPortadaReal() {
                         }
                     });
                 }
-                mostrarInfoTitulo(esVistaMovil() ? 8000 : 30000, { mantenerAyuda: true });
-                mostrarAyudaInfoTitulo(40000);
+                ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
             }
 
         // =========================================================

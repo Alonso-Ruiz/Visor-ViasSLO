@@ -1,14 +1,32 @@
 (function() {
     var button = document.getElementById('btn-streetview');
+    var desktopStreetViewButton = document.getElementById('desktop-streetview');
     var ghost = document.getElementById('streetview-drag-ghost');
     var mapEl = document.getElementById('map');
+    var scriptSrc = document.currentScript && document.currentScript.src;
+    var visorMap = window.visorMap;
+    var visorOl = window.visorOl;
     var targeting = false;
     var dragging = false;
     var startPixel = null;
     var wasTargetingBeforeDrag = false;
     var activePointerId = null;
+    var dragSource = null;
 
-    if (!button || !mapEl || typeof map === 'undefined' || typeof ol === 'undefined') return;
+    if (!button || !mapEl || window.__streetViewInitialized) return;
+    if (!visorMap || !visorOl) {
+        document.addEventListener('visor-map-ready', function() {
+            if (window.__streetViewInitialized || !scriptSrc) return;
+            var retryScript = document.createElement('script');
+            retryScript.src = scriptSrc;
+            retryScript.async = false;
+            document.body.appendChild(retryScript);
+        }, { once: true });
+        return;
+    }
+    window.__streetViewInitialized = true;
+    var map = visorMap;
+    var ol = visorOl;
 
     function setTargeting(active) {
         targeting = active;
@@ -16,6 +34,14 @@
         document.body.classList.toggle('streetview-targeting', active);
         if (!active) clearStreetViewHighlight();
     }
+
+    window.alternarStreetView = function() {
+        if (targeting) {
+            cancelStreetViewMode();
+        } else {
+            setTargeting(true);
+        }
+    };
 
     function updateGhost(clientX, clientY) {
         if (!ghost) return;
@@ -35,6 +61,8 @@
         hideGhost();
         clearStreetViewHighlight();
     }
+
+    window.cancelarStreetView = cancelStreetViewMode;
 
     function isVisualOnlyLayer(layer) {
         return layer === layerLimite ||
@@ -131,18 +159,19 @@
         clearStreetViewHighlight();
     }
 
-    function beginStreetViewDrag(evt) {
+    function beginStreetViewDrag(evt, source) {
         if (dragging) return;
         if (evt.pointerType === 'mouse' && evt.button !== 0) return;
         dragging = true;
+        dragSource = source || button;
         activePointerId = evt.pointerId;
         startPixel = [evt.clientX, evt.clientY];
         wasTargetingBeforeDrag = targeting;
         setTargeting(true);
         updateGhost(evt.clientX, evt.clientY);
-        if (button.setPointerCapture) {
+        if (dragSource.setPointerCapture) {
             try {
-                button.setPointerCapture(evt.pointerId);
+                dragSource.setPointerCapture(evt.pointerId);
             } catch (error) {}
         }
         evt.preventDefault();
@@ -163,11 +192,12 @@
         if (activePointerId !== null && evt.pointerId !== activePointerId) return;
         dragging = false;
         activePointerId = null;
-        if (button.releasePointerCapture) {
+        if (dragSource && dragSource.releasePointerCapture) {
             try {
-                button.releasePointerCapture(evt.pointerId);
+                dragSource.releasePointerCapture(evt.pointerId);
             } catch (error) {}
         }
+        dragSource = null;
         var moved = Math.hypot(evt.clientX - startPixel[0], evt.clientY - startPixel[1]) > 8;
         var coordinate = getCoordinateFromClient(evt.clientX, evt.clientY);
         var rect = mapEl.getBoundingClientRect();
@@ -185,6 +215,17 @@
     }
 
     button.addEventListener('pointerdown', beginStreetViewDrag);
+    var mobileStreetViewButton = document.getElementById('mobile-streetview');
+    if (mobileStreetViewButton) {
+        mobileStreetViewButton.addEventListener('pointerdown', function(evt) {
+            beginStreetViewDrag(evt, mobileStreetViewButton);
+        });
+    }
+    if (desktopStreetViewButton) {
+        desktopStreetViewButton.addEventListener('pointerdown', function(evt) {
+            beginStreetViewDrag(evt, desktopStreetViewButton);
+        });
+    }
     document.addEventListener('pointermove', moveStreetViewDrag, { passive: false });
     document.addEventListener('pointerup', endStreetViewDrag, { passive: false });
     document.addEventListener('pointercancel', function(evt) {

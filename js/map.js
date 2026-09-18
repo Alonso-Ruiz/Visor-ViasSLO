@@ -7,6 +7,9 @@
         });
 
         map.addControl(new ol.control.Zoom());
+        window.visorMap = map;
+        window.visorOl = ol;
+        document.dispatchEvent(new Event('visor-map-ready'));
 
         map.once('rendercomplete', function() {
             requestAnimationFrame(function() {
@@ -427,6 +430,10 @@
 
         function setOpacityPanelOpen(open) {
             if (!btnOpacityPanel || !opacityPanel) return;
+            if (open && typeof ocultarInfoTitulo === 'function') {
+                ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
+            }
+            if (open && typeof window.cancelarStreetView === 'function') window.cancelarStreetView();
             opacityPanel.classList.toggle('is-open', open);
             btnOpacityPanel.classList.toggle('is-active', open);
             btnOpacityPanel.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -458,7 +465,14 @@
         var btnCerrarPanel = document.getElementById('btn-cerrar-panel');
         var setPanelAbierto = function(abierto) {
             document.body.classList.toggle('panel-open', abierto);
-            if (abierto) setOpacityPanelOpen(false);
+            btnAbrirPanel.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+            if (abierto) {
+                setOpacityPanelOpen(false);
+                if (typeof ocultarInfoTitulo === 'function') {
+                    ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
+                }
+                if (typeof window.cancelarStreetView === 'function') window.cancelarStreetView();
+            }
         };
 
         btnCerrarPanel.addEventListener('click', function() { 
@@ -473,13 +487,23 @@
             setPanelAbierto(true);
         });
 
-        if (window.innerWidth <= 896) {
-            panel.classList.add('oculto');
-            btnAbrirPanel.style.display = 'flex';
-            setPanelAbierto(false);
-        } else {
-            panel.classList.remove('oculto');
-            btnAbrirPanel.style.display = 'none';
-            setPanelAbierto(true);
+        var mobileOpacity = document.getElementById('mobile-opacity');
+        var desktopOpacity = document.getElementById('desktop-opacity');
+
+        if (mobileOpacity) {
+            mobileOpacity.addEventListener('click', function(e) {
+                e.stopPropagation();
+                btnOpacityPanel.click();
+            });
         }
+        if (desktopOpacity) {
+            desktopOpacity.addEventListener('click', function(e) {
+                e.stopPropagation();
+                btnOpacityPanel.click();
+            });
+        }
+
+        panel.classList.add('oculto');
+        btnAbrirPanel.style.display = 'flex';
+        setPanelAbierto(false);
 

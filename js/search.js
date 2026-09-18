@@ -96,18 +96,39 @@
             construirIndiceVias();
         }
 
-        // FIX DEFINITIVO DEL POPUP: Saca el contenedor de OpenLayers por encima del panel
+        // Los overlays de OpenLayers permanecen debajo de los paneles y modales.
         var fixZindex = document.createElement('style');
-        fixZindex.textContent = '.ol-overlaycontainer-stopevent { z-index: 3000 !important; }';
+        fixZindex.textContent = '.ol-overlaycontainer-stopevent { z-index: 1100 !important; }';
         document.head.appendChild(fixZindex);
 
         var inputBuscador = document.getElementById('buscador-vias');
+        var btnLimpiarBusqueda = document.getElementById('btn-limpiar-busqueda');
         var resDiv = document.getElementById('lista-resultados');
-        var indiceSeleccionado = -1; 
+        var indiceSeleccionado = -1;
+
+        function actualizarBotonLimpiar() {
+            if (!btnLimpiarBusqueda) return;
+            var visible = inputBuscador.value.length > 0;
+            btnLimpiarBusqueda.classList.toggle('is-visible', visible);
+            btnLimpiarBusqueda.setAttribute('aria-hidden', visible ? 'false' : 'true');
+            btnLimpiarBusqueda.tabIndex = visible ? 0 : -1;
+        }
+
+        if (btnLimpiarBusqueda) {
+            btnLimpiarBusqueda.addEventListener('click', function() {
+                inputBuscador.value = '';
+                indiceSeleccionado = -1;
+                resDiv.textContent = '';
+                resDiv.style.display = 'none';
+                actualizarBotonLimpiar();
+                inputBuscador.focus();
+            });
+        }
 
         inputBuscador.addEventListener('input', function() {
             asegurarIndiceVias();
             indiceSeleccionado = -1;
+            actualizarBotonLimpiar();
             var safeValue = this.value.replace(/[<>"'`´=;()]/g, ""); 
             var inputVal = quitarTildes(safeValue);
 
@@ -203,8 +224,9 @@
             }
         }
 
-        window.seleccionarDesdeBuscador = function(nombre) { 
-            inputBuscador.value = nombre; 
+        window.seleccionarDesdeBuscador = function(nombre) {
+            inputBuscador.value = nombre;
+            actualizarBotonLimpiar();
             resDiv.style.display = 'none'; 
             inputBuscador.blur(); // Quitar foco para ocultar teclado numérico en móviles
             

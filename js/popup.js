@@ -224,7 +224,9 @@
             sourceHighlight.clear();
             var p = feature.getProperties();
             var codigoClic = String(getProp(p, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
-            var extentTotal = ol.extent.createEmpty();
+            // La extensión de enfoque siempre representa la geometría que el
+            // usuario seleccionó, nunca la sección normativa relacionada.
+            var extentSeleccion = ol.extent.createEmpty();
 
             var pSec = null;
             if (codigoClic && codigoClic !== "-") {
@@ -234,7 +236,6 @@
                     var fCod = String(getProp(fProps, 'CODIGO', 'C\u00d3DIGO') || '').trim().toUpperCase();
                     if (fCod === codigoClic) {
                         pSec = fProps;
-                        ol.extent.extend(extentTotal, secFeatures[i].getGeometry().getExtent());
                         break;
                     }
                 }
@@ -243,11 +244,11 @@
             if (arrayDeTramosAdicionales && arrayDeTramosAdicionales.length > 0) {
                 arrayDeTramosAdicionales.forEach(f => {
                     sourceHighlight.addFeature(f);
-                    if(f.getGeometry()) ol.extent.extend(extentTotal, f.getGeometry().getExtent());
+                    if (f.getGeometry()) ol.extent.extend(extentSeleccion, f.getGeometry().getExtent());
                 });
             } else {
                 sourceHighlight.addFeature(feature);
-                if(feature.getGeometry()) ol.extent.extend(extentTotal, feature.getGeometry().getExtent());
+                if (feature.getGeometry()) ol.extent.extend(extentSeleccion, feature.getGeometry().getExtent());
             }
 
             // ==========================================
@@ -449,15 +450,16 @@
             // ==========================================
             var puntoCentrado;
 
-            if (coordinate) {
-                puntoCentrado = coordinate;
-                overlay.setPosition(coordinate);
-            } else if (!ol.extent.isEmpty(extentTotal)) {
-                var centerBoundingBox = ol.extent.getCenter(extentTotal);
+            var geometriaPrincipal = feature.getGeometry();
+            if (coordinate && geometriaPrincipal) {
+                // Ancla el popup al tramo real, incluso si el toque quedó unos
+                // píxeles fuera de una línea estrecha por la tolerancia de clic.
+                puntoCentrado = geometriaPrincipal.getClosestPoint(coordinate);
+                overlay.setPosition(puntoCentrado);
+            } else if (!ol.extent.isEmpty(extentSeleccion)) {
+                var centerBoundingBox = ol.extent.getCenter(extentSeleccion);
                 puntoCentrado = centerBoundingBox;
-                if (feature.getGeometry()) {
-                    puntoCentrado = feature.getGeometry().getClosestPoint(centerBoundingBox);
-                }
+                if (geometriaPrincipal) puntoCentrado = geometriaPrincipal.getClosestPoint(centerBoundingBox);
                 overlay.setPosition(puntoCentrado);
             }
 
@@ -465,7 +467,9 @@
             if (popupDOM) popupDOM.style.zIndex = '3000';
 
             if (puntoCentrado) {
-                var pointExtent = [puntoCentrado[0], puntoCentrado[1], puntoCentrado[0], puntoCentrado[1]];
+                var extentParaFit = ol.extent.isEmpty(extentSeleccion)
+                    ? [puntoCentrado[0], puntoCentrado[1], puntoCentrado[0], puntoCentrado[1]]
+                    : extentSeleccion;
                 
                 var anchoP = map.getSize() ? map.getSize()[0] : window.innerWidth;
                 var altoP = map.getSize() ? map.getSize()[1] : window.innerHeight;
@@ -510,7 +514,7 @@
                 var zoomActual = map.getView().getZoom();
                 var zoomDestino = zoomActual > 16.5 ? zoomActual : 16.5;
 
-                map.getView().fit(pointExtent, { 
+                map.getView().fit(extentParaFit, {
                     padding: [pTop, pRight, pBottom, pLeft], 
                     maxZoom: zoomDestino, 
                     duration: 500 

@@ -47,7 +47,7 @@
         'layers/Lotes_Limatambo_2.js?v=20260811-limatambo-submanzanas',
         'layers/reastechadas_3.js?v=20260811-limatambo-submanzanas',
         'js/pdf-manifest.js?v=20260903-terre-tilde-labels',
-        'js/utils.js?v=20260903-mobile-title',
+        'js/utils.js?v=20260918-desktop-scale-fix',
         'styles/subsectores_1_style.js',
         'styles/Sectores_2_style.js',
         'styles/PlantasdeAlamedasypasajes_2_style.js',
@@ -62,11 +62,11 @@
         'styles/Lotes_Limatambo_2_style.js?v=20260811-lotes-rayado',
         'styles/reastechadas_3_style.js?v=20260811-limatambo-submanzanas',
         'js/layers.js?v=20260903-performance',
-        'js/map.js?v=20260903-performance',
-        'js/streetview.js?v=20260902-mobile-drag',
-        'js/popup.js?v=20260903-concejo-bosque',
-        'js/search.js?v=20260903-performance',
-        'js/app.js?v=20260903-bootstrap'
+        'js/map.js?v=20260918-fontawesome-final',
+        'js/streetview.js?v=20260918-desktop-redesign',
+        'js/popup.js?v=20260918-panel-precision',
+        'js/search.js?v=20260918-desktop-polish',
+        'js/app.js?v=20260918-desktop-redesign'
     ];
 
     function informarErrorCarga() {
