@@ -33,6 +33,9 @@ function inicializarEventosInterfaz() {
         }
     }
 
+    // Punto único para que cualquier acceso móvil use el diseño moderno de anexos.
+    window.setAnexosOpen = setAnexosOpen;
+
     var mobileAnexos = document.getElementById('mobile-anexos');
     var desktopAnexos = document.getElementById('desktop-anexos');
     var cerrarMobileAnexos = document.getElementById('btn-cerrar-anexos-mobile');

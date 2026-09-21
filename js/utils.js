@@ -123,9 +123,14 @@ function cerrarPortadaReal() {
                     button.addEventListener('click', function() {
                         var title = document.getElementById('title-container');
                         var estaVisible = title && !title.classList.contains('title-hidden');
-                        if (esVistaMovil() && estaVisible) {
-                            if (anexos && anexos.open) anexos.open = false;
-                            ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
+                        if (esVistaMovil()) {
+                            var anexosAbiertos = document.body.classList.contains('mobile-anexos-open');
+                            if (typeof window.setAnexosOpen === 'function') {
+                                window.setAnexosOpen(!anexosAbiertos);
+                            } else if (anexosAbiertos || estaVisible) {
+                                if (anexos && anexos.open) anexos.open = false;
+                                ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
+                            }
                         } else {
                             mostrarInfoTitulo(esVistaMovil() ? 0 : 50000);
                         }
@@ -134,6 +139,10 @@ function cerrarPortadaReal() {
                 if (anexos) {
                     anexos.addEventListener('toggle', function() {
                         if (anexos.open) {
+                            if (esVistaMovil()) {
+                                document.body.classList.add('mobile-anexos-open');
+                                document.body.classList.remove('desktop-anexos-open');
+                            }
                             mostrarInfoTitulo(90000);
                         } else if (esVistaMovil()) {
                             ocultarInfoTitulo({ forzar: true, mostrarAyuda: false });
