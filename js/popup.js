@@ -9,6 +9,95 @@
 
         closer.onclick = function() { overlay.setPosition(undefined); closer.blur(); sourceHighlight.clear(); return false; };
 
+        function cerrarLeyendaMovilParaPopup() {
+            if (window.innerWidth > 896) return;
+
+            var panel = document.getElementById('panel-usos');
+            var botonAbrir = document.getElementById('btn-abrir-panel');
+            if (!panel || panel.classList.contains('oculto')) return;
+
+            panel.classList.add('oculto');
+            document.body.classList.remove('panel-open');
+            if (botonAbrir) {
+                botonAbrir.style.display = 'flex';
+                botonAbrir.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function enfocarFeatureConPopup(feature, coordinate, extentAlternativo) {
+            if (!feature || !feature.getGeometry()) return;
+
+            cerrarLeyendaMovilParaPopup();
+
+            var geometria = feature.getGeometry();
+            var extent = extentAlternativo && !ol.extent.isEmpty(extentAlternativo)
+                ? extentAlternativo
+                : geometria.getExtent();
+            var esClickDirecto = Array.isArray(coordinate) && coordinate.length >= 2;
+            var puntoPopup;
+
+            if (esClickDirecto) {
+                puntoPopup = geometria.getClosestPoint(coordinate);
+            } else {
+                var centroExtent = ol.extent.getCenter(extent);
+                puntoPopup = geometria.getClosestPoint(centroExtent);
+            }
+
+            overlay.setPosition(puntoPopup);
+            if (container) container.style.zIndex = '3000';
+
+            var size = map.getSize() || [window.innerWidth, window.innerHeight];
+            var esMovil = size[0] <= 896;
+            var panel = document.getElementById('panel-usos');
+            var panelAbierto = !esMovil && panel && !panel.classList.contains('oculto');
+            var altoPopup = container ? Math.min(container.offsetHeight || 280, Math.max(220, size[1] * 0.55)) : 280;
+            var paddingSuperior = Math.min(altoPopup + (esMovil ? 92 : 78), Math.max(110, size[1] - 230));
+            var padding = [
+                paddingSuperior,
+                panelAbierto ? (panel.offsetWidth + 28) : (esMovil ? 18 : 72),
+                esMovil ? 126 : 72,
+                esMovil ? 18 : 370
+            ];
+
+            // En un clic se enfoca el punto exacto escogido. En búsquedas o
+            // selecciones múltiples se conserva la extensión completa.
+            var extentEnfoque = esClickDirecto
+                ? [puntoPopup[0], puntoPopup[1], puntoPopup[0], puntoPopup[1]]
+                : extent;
+            var zoomActual = map.getView().getZoom() || 14;
+            var zoomObjetivo = Math.max(zoomActual, esMovil ? 17 : 16.75);
+
+            if (esClickDirecto) {
+                var resolucionObjetivo = map.getView().getResolutionForZoom(zoomObjetivo);
+                var pixelDeseado = [
+                    padding[3] + ((size[0] - padding[1] - padding[3]) / 2),
+                    padding[0] + ((size[1] - padding[0] - padding[2]) / 2)
+                ];
+                var centroObjetivo = [
+                    puntoPopup[0] + ((size[0] / 2) - pixelDeseado[0]) * resolucionObjetivo,
+                    puntoPopup[1] + (pixelDeseado[1] - (size[1] / 2)) * resolucionObjetivo
+                ];
+
+                map.getView().animate({
+                    center: centroObjetivo,
+                    zoom: zoomObjetivo,
+                    duration: 520
+                });
+            } else {
+                map.getView().fit(extentEnfoque, {
+                    padding: padding,
+                    maxZoom: zoomObjetivo,
+                    duration: 520
+                });
+            }
+
+            window.setTimeout(function() {
+                if (overlay.getPosition() && typeof overlay.panIntoView === 'function') {
+                    overlay.panIntoView({ animation: { duration: 220 }, margin: esMovil ? 18 : 24 });
+                }
+            }, 560);
+        }
+
         function crearFilaSegura(tablaDOM, etiqueta, valor) {
             if (valor && valor !== "-" && String(valor).trim() !== "") {
                 var tr = document.createElement('tr');
@@ -50,7 +139,7 @@
             }
 
             content.appendChild(tabla);
-            overlay.setPosition(coordinate);
+            enfocarFeatureConPopup(feature, coordinate);
         }
 
         function mostrarPopupTorres(feature, coordinate) {
@@ -97,7 +186,7 @@
                 content.appendChild(btn);
             }
 
-            overlay.setPosition(coordinate);
+            enfocarFeatureConPopup(feature, coordinate);
         }
 
         var pdfManifest = Array.isArray(window.PDF_MANIFEST) ? window.PDF_MANIFEST : [];
@@ -445,79 +534,5 @@
                 content.appendChild(multiDiv);
             }
 
-           // ==========================================
-            // CENTRADO INTELIGENTE (RESPONSIVE)
-            // ==========================================
-            var puntoCentrado;
-
-            var geometriaPrincipal = feature.getGeometry();
-            if (coordinate && geometriaPrincipal) {
-                // Ancla el popup al tramo real, incluso si el toque quedó unos
-                // píxeles fuera de una línea estrecha por la tolerancia de clic.
-                puntoCentrado = geometriaPrincipal.getClosestPoint(coordinate);
-                overlay.setPosition(puntoCentrado);
-            } else if (!ol.extent.isEmpty(extentSeleccion)) {
-                var centerBoundingBox = ol.extent.getCenter(extentSeleccion);
-                puntoCentrado = centerBoundingBox;
-                if (geometriaPrincipal) puntoCentrado = geometriaPrincipal.getClosestPoint(centerBoundingBox);
-                overlay.setPosition(puntoCentrado);
-            }
-
-            var popupDOM = document.getElementById('popup');
-            if (popupDOM) popupDOM.style.zIndex = '3000';
-
-            if (puntoCentrado) {
-                var extentParaFit = ol.extent.isEmpty(extentSeleccion)
-                    ? [puntoCentrado[0], puntoCentrado[1], puntoCentrado[0], puntoCentrado[1]]
-                    : extentSeleccion;
-                
-                var anchoP = map.getSize() ? map.getSize()[0] : window.innerWidth;
-                var altoP = map.getSize() ? map.getSize()[1] : window.innerHeight;
-                var isMobile = anchoP <= 896;
-                
-                var panelUsos = document.getElementById('panel-usos');
-                var panelDerechoAbierto = panelUsos && !panelUsos.classList.contains('oculto');
-                
-                var pTop = 50, pRight = 50, pBottom = 50, pLeft = 50;
-
-                if (isMobile) {
-                    if (panelDerechoAbierto) {
-                        pBottom = (altoP * 0.65) + 40; 
-                    } else {
-                        pBottom = 120;
-                    }
-                    pTop = 80;
-                } else {
-                    pLeft = 380; 
-                    if (panelDerechoAbierto) {
-                        pRight = 560; 
-                    } else {
-                        pRight = 200; 
-                    }
-                    pTop = 150; 
-                    pBottom = 80;
-                }
-
-                if ((pLeft + pRight) >= (anchoP - 20)) {
-                    pLeft = 20; 
-                    if (pRight >= (anchoP - 20)) {
-                        pRight = anchoP / 2;
-                    }
-                }
-                if ((pTop + pBottom) >= (altoP - 20)) {
-                    pTop = 20;
-                    if (pBottom >= (altoP - 20)) {
-                        pBottom = altoP / 2;
-                    }
-                }
-
-                var zoomActual = map.getView().getZoom();
-                var zoomDestino = zoomActual > 16.5 ? zoomActual : 16.5;
-
-                map.getView().fit(extentParaFit, {
-                    padding: [pTop, pRight, pBottom, pLeft], 
-                    maxZoom: zoomDestino, 
-                    duration: 500 
-                });
-            }
+            enfocarFeatureConPopup(feature, coordinate, extentSeleccion);
         } 

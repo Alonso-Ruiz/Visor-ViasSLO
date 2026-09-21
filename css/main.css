@@ -1049,7 +1049,15 @@ body.streetview-targeting .ol-viewport {
     bottom: 12px;
     left: -50px;
     min-width: 290px;
+    max-height: calc(100dvh - 130px);
+    overflow: hidden;
     border: 1px solid #eee;
+}
+
+#popup-content {
+    max-height: calc(100dvh - 132px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .ol-popup:after,
@@ -1518,6 +1526,7 @@ body.streetview-targeting .ol-viewport {
         min-width: 250px;
         width: 85vw;
         max-width: 320px;
+        max-height: calc(100dvh - 174px);
         left: -50%;
         transform: translateX(-50%);
         margin-left: 25px;
@@ -1526,6 +1535,10 @@ body.streetview-targeting .ol-viewport {
     .ol-popup:after,
     .ol-popup:before {
         left: 50%;
+    }
+
+    #popup-content {
+        max-height: calc(100dvh - 176px);
     }
 }
 
@@ -1880,9 +1893,9 @@ body.streetview-targeting .ol-viewport {
     }
 
     .cabecera-verde {
-        min-height: 70px;
+        min-height: 58px;
         box-sizing: border-box;
-        padding: 22px 22px 14px;
+        padding: 17px 22px 9px;
         border-radius: 24px 24px 0 0;
         background: var(--mobile-green);
     }
@@ -1910,7 +1923,7 @@ body.streetview-targeting .ol-viewport {
     }
 
     #contenido-scrollable {
-        padding: 14px 14px calc(20px + env(safe-area-inset-bottom));
+        padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
     }
 
     body.panel-open #mobile-toolbar {
@@ -2108,7 +2121,7 @@ body.streetview-targeting .ol-viewport {
 
     #panel-usos { top: var(--desktop-header-height); right: 0; bottom: 0; left: auto; z-index: 2450; width: min(350px, 42vw); height: auto; border-radius: 18px 0 0 0; box-shadow: -6px 0 19px rgba(11, 54, 46, .22); }
     #panel-usos.oculto { transform: translateX(110%); }
-    .cabecera-verde { min-height: 70px; padding: 19px 42px 15px 17px; background: linear-gradient(120deg, #00976c, #008260); }
+    .cabecera-verde { min-height: 58px; padding: 14px 42px 10px 17px; background: linear-gradient(120deg, #00976c, #008260); }
     .cabecera-verde .panel-eyebrow { font-size: 9px; }
     .cabecera-verde .panel-title { font-size: 17px; }
     #btn-cerrar-panel { top: 19px; right: 17px; width: 28px; height: 28px; border-radius: 50%; }

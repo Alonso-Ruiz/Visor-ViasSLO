@@ -64,7 +64,7 @@
         'js/layers.js?v=20260903-performance',
         'js/map.js?v=20260918-fontawesome-final',
         'js/streetview.js?v=20260918-desktop-redesign',
-        'js/popup.js?v=20260918-panel-precision',
+        'js/popup.js?v=20260921-popup-focus',
         'js/search.js?v=20260918-desktop-polish',
         'js/app.js?v=20260918-desktop-redesign'
     ];
